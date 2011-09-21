@@ -392,10 +392,10 @@ def setup_environ(settings_mod, original_settings_path=None):
     # way. For example, if this file (manage.py) lives in a directory
     # "myproject", this code would add "/path/to/myproject" to sys.path.
     if '__init__.py' in settings_mod.__file__:
-        p = os.path.dirname(settings_mod.__file__)
+        path = os.path.dirname(settings_mod.__file__)
     else:
-        p = settings_mod.__file__
-    project_directory, settings_filename = os.path.split(p)
+        path = settings_mod.__file__
+    project_directory, settings_filename = os.path.split(path)
     if project_directory == os.curdir or not project_directory:
         project_directory = os.getcwd()
     project_name = os.path.basename(project_directory)
@@ -424,6 +424,42 @@ def setup_environ(settings_mod, original_settings_path=None):
     sys.path.pop()
 
     return project_directory
+
+
+def setup_settings(path):
+    """
+    Configures the settings first by looking at the environment variable
+    DJANGO_SETTINGS_MODULE or if that fail tries to find it with the
+    given module path.
+
+    Example:
+
+    from django.core.management import setup_settings
+
+    setup_settings(__name__)
+    setup_settings('wsgi')
+    setup_settings('mysite.wsgi')
+    """
+    try:
+        # Check if DJANGO_SETTINGS_MODULE is already given
+        settings_module = os.environ['DJANGO_SETTINGS_MODULE']
+        if not settings_module:
+            raise KeyError
+        settings = import_module(settings_module)
+    except KeyError:
+        # Or try importing the settings module two levels up,
+        # so if name is 'mysite.wsgi', it'll try 'mysite.settings'
+        try:
+            settings = import_module('settings', path)
+        except ImportError:
+            # two levels up because name contains the submodule
+            settings = import_module('..settings', path)
+    setup_environ(settings)
+
+    # Return the settings module
+    from django.conf import settings
+    return settings
+
 
 def execute_from_command_line(argv=None):
     """

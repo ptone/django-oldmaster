@@ -21,7 +21,5 @@ class Command(BaseRunserverCommand):
         handler = super(Command, self).get_handler(*args, **options)
         use_static_handler = options.get('use_static_handler', True)
         insecure_serving = options.get('insecure_serving', False)
-        if (settings.DEBUG and use_static_handler or
-                (use_static_handler and insecure_serving)):
-            handler = StaticFilesHandler(handler)
-        return handler
+        enabled = use_static_handler and (settings.DEBUG or insecure_serving)
+        return StaticFilesHandler(handler, enabled=enabled)

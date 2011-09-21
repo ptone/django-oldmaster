@@ -112,7 +112,7 @@ Starting the server
 Example command line for a Web server that understand the uWSGI protocol::
 
     uwsgi --chdir=/path/to/your/project
-        --module='django.core.handlers.wsgi:WSGIHandler()' \
+        --module='wsgi:application' \
         --env DJANGO_SETTINGS_MODULE=settings \
         --master --pidfile=/tmp/project-master.pid \
         --socket=127.0.0.1:49152 \      # can also be a file
@@ -128,7 +128,8 @@ Example command line for a Web server that understand the uWSGI protocol::
 Django specific options are:
 
 * ``chdir``: should be the path to your project
-* ``module``: uwsgi module to use
+* ``module``: WSGI module to use, probably the ``wsgi`` module which
+  :djadmin:`startproject` creates.
 * ``pythonpath``: optional path to your project virtualenv
 * ``env``: should contain at least ``DJANGO_SETTINGS_MODULE``
 

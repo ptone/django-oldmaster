@@ -1,3 +1,63 @@
+"""
+WSGI entrypoints
+
+Overview
+--------
+
+The motivation behind this module is to expose the WSGI application that
+exists in Django to the actual Django user project. The idea is that you
+have a documented way to apply WSGI middlewares that are then being used by
+both the internal WSGI development server as well as any other WSGI server
+in production.
+
+The way it works is that there are a handful of WSGI application objects:
+
+-   django.core.handlers.wsgi.WSGIHandler: this is the implementation of the
+    actual Django WSGI dispatcher and it should be considered an
+    implementation detail. While users are free to subclass and extend it,
+    it's not necessarily supported.
+-   django.core.handlers.wsgi.application: this is the documented WSGI
+    application which is used by default.
+-   django.core.handlers.wsgi.django_application: this is the actual WSGI
+    application that is passed to the servers. It's internally proxying to
+    the configured WSGI application and will most likely be a (decorated)
+    version of the `application`.
+
+The reason why we have multiple applications here is because of the
+ability to apply middlewares.  Basically `application` is the WSGI
+application without any middlewarse applied, `django_application` is a
+proxy to the base application + all applied middlewares.
+
+The middlewares are added according to the WSGI_APPLICATION configuration
+setting which points to a module that imports the `application` as
+`application` and can apply middlewares.
+
+If the WSGI_APPLICATION setting is ``None`` (which is the case for upgraded
+applications from before we had exposed WSGI support) instead of the regular
+application, the `application` is used.
+
+The WSGI_APPLICATION
+--------------------
+
+The WSGI_APPLICATION configuration setting points to an actual WSGI
+application.  By default the project generator will configure that a file
+called `projectname.wsgi` exists and contains a global variable named
+`application`. The contents look like this::
+
+    from django.core.handlers.wsgi import application
+
+This can be used to apply WSGI middlewares::
+
+    from helloworld.wsgi import HelloWorldApplication
+    application = HelloWorldApplication(application)
+
+Of course usually you would have an actual Django WSGI application there, but
+it also might make sense to replace the whole Django WSGI application with
+a custom one that later delegates to the Django one (for instance if you
+want to combine a Django application with an application of another framework).
+
+"""
+from __future__ import with_statement
 import sys
 from threading import Lock
 try:
@@ -7,10 +67,12 @@ except ImportError:
 
 from django import http
 from django.core import signals
+from django.core.exceptions import ImproperlyConfigured
 from django.core.handlers import base
 from django.core.urlresolvers import set_script_prefix
 from django.utils import datastructures
 from django.utils.encoding import force_unicode, iri_to_uri
+from django.utils.importlib import import_module
 from django.utils.log import getLogger
 
 logger = getLogger('django.request')
@@ -202,13 +264,12 @@ class WSGIRequest(http.HttpRequest):
     FILES = property(_get_files)
     REQUEST = property(_get_request)
 
+
 class WSGIHandler(base.BaseHandler):
     initLock = Lock()
     request_class = WSGIRequest
 
     def __call__(self, environ, start_response):
-        from django.conf import settings
-
         # Set up middleware if needed. We couldn't do this earlier, because
         # settings weren't available.
         if self._request_middleware is None:
@@ -254,3 +315,39 @@ class WSGIHandler(base.BaseHandler):
         start_response(status, response_headers)
         return response
 
+application = WSGIHandler()
+
+
+class DjangoWSGIApplication(object):
+    """
+    Implements a proxy to the actual WSGI application as configured
+    by the user in settings.WSGI_APPLICATION which will usually be the
+    `application`, optionally with middlewares applied.
+    """
+    def __init__(self):
+        self._instance = None
+        self._instance_lock = Lock()
+
+    def _load_application(self):
+        from django.conf import settings
+        app_path = getattr(settings, 'WSGI_APPLICATION')
+        if app_path is None:
+            return application
+        try:
+            module_name, attr = app_path.rsplit('.', 1)
+            return getattr(import_module(module_name), attr)
+        except (ImportError, AttributeError), e:
+            raise ImproperlyConfigured("WSGI application '%s' could not "
+                                       "be loaded: %s" % (app_path, e))
+
+    def __call__(self, environ, start_response):
+        # Non-atomic check, avoids taking a lock at each call of this method
+        if self._instance is None:
+            with self._instance_lock:
+                # Atomic check, prevents concurrent initialization of self._instance
+                if self._instance is None
+                    self._instance = self._load_application()
+        return self._instance(environ, start_response)
+
+# the proxy used in deployment
+django_application = DjangoWSGIApplication()

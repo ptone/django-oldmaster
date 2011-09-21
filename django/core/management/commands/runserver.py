@@ -5,7 +5,7 @@ import sys
 import socket
 
 from django.core.management.base import BaseCommand, CommandError
-from django.core.handlers.wsgi import WSGIHandler
+from django.core.handlers.wsgi import django_application
 from django.core.servers.basehttp import AdminMediaHandler, run, WSGIServerException
 from django.utils import autoreload
 
@@ -37,7 +37,7 @@ class BaseRunserverCommand(BaseCommand):
         """
         Returns the default WSGI handler for the runner.
         """
-        return WSGIHandler()
+        return django_application
 
     def handle(self, addrport='', *args, **options):
         self.use_ipv6 = options.get('use_ipv6')
