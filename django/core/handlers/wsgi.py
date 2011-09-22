@@ -186,6 +186,7 @@ class LimitedStream(object):
         self.buffer = sio.read()
         return line
 
+
 class WSGIRequest(http.HttpRequest):
     def __init__(self, environ):
         script_name = base.get_script_name(environ)
@@ -345,7 +346,7 @@ class DjangoWSGIApplication(object):
         if self._instance is None:
             with self._instance_lock:
                 # Atomic check, prevents concurrent initialization of self._instance
-                if self._instance is None
+                if self._instance is None:
                     self._instance = self._load_application()
         return self._instance(environ, start_response)
 
