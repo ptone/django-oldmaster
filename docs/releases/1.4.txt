@@ -644,10 +644,11 @@ Starting with Django 1.4 they are now available in :mod:`django.conf.urls`.
 ``django.contrib.databrowse``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Databrowse has not seen active development for some time, and this does
-not show any sign of changing. There has been some discussion of integrating
-the functionality of databrowse into the admin, but at this time no progress
-has been made.
+Databrowse has not seen active development for some time, and this does not
+show any sign of changing. There had been a suggestion for a GSOC project to
+integrate the functionality of databrowse into the admin, but no progress was
+made. While Databrowse has been deprecated, an enhancement of
+django.contrib.admin providing a similar feature set is still possible.
 
 .. _GSOC Proposal: https://code.djangoproject.com/wiki/SummerOfCode2011#Integratedatabrowseintotheadmin
 
