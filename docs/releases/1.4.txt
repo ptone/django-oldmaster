@@ -651,7 +651,7 @@ has been made.
 
 .. _GSOC Proposal: https://code.djangoproject.com/wiki/SummerOfCode2011#Integratedatabrowseintotheadmin
 
-The code that powers Databrowse is licensed under the same terms of Django
+The code that powers Databrowse is licensed under the same terms as Django
 itself, and so is available to be adopted by an individual or group as
 a third-party project.
 
