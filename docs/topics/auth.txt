@@ -1653,7 +1653,9 @@ Writing an authentication backend
 ---------------------------------
 
 An authentication backend is a class that implements two methods:
-``get_user(user_id)`` and ``authenticate(**credentials)``.
+``get_user(user_id)`` and ``authenticate(**credentials)``. It must also set three
+attributes: ``supports_anonymous_user``, ``supports_inactive_user``,
+and ``supports_object_permissions``.
 
 The ``get_user`` method takes a ``user_id`` -- which could be a username,
 database ID or whatever -- and returns a ``User`` object.
@@ -1674,6 +1676,8 @@ But it could also authenticate a token, like so::
 Either way, ``authenticate`` should check the credentials it gets, and it
 should return a ``User`` object that matches those credentials, if the
 credentials are valid. If they're not valid, it should return ``None``.
+
+The required attributes are each documented in their own section below.
 
 The Django admin system is tightly coupled to the Django ``User`` object
 described at the beginning of this document. For now, the best way to deal with
@@ -1699,7 +1703,10 @@ object the first time a user authenticates::
         ADMIN_PASSWORD = 'sha1$4e987$afbcf42e21bd417fb71db8c66b321e9fc33051de'
         """
 
+        # required attributes for auth backends:
+        supports_anonymous_user = False
         supports_inactive_user = False
+        supports_object_permissions = False
 
         def authenticate(self, username=None, password=None):
             login_valid = (settings.ADMIN_LOGIN == username)
@@ -1782,7 +1789,8 @@ anonymous users. However, it has a foundation that allows custom authentication
 backends to specify authorization for anonymous users. This is especially useful
 for the authors of re-usable apps, who can delegate all questions of authorization
 to the auth backend, rather than needing settings, for example, to control
-anonymous access.
+anonymous access. An authorization backend must set ``supports_anonymous_user`` to
+indicate whether or not it will handle anonymous user authentication.
 
 
 Authorization for inactive users
