@@ -1676,8 +1676,6 @@ Either way, ``authenticate`` should check the credentials it gets, and it
 should return a ``User`` object that matches those credentials, if the
 credentials are valid. If they're not valid, it should return ``None``.
 
-The required attributes are each documented in their own section below.
-
 The Django admin system is tightly coupled to the Django ``User`` object
 described at the beginning of this document. For now, the best way to deal with
 this is to create a Django ``User`` object for each user that exists for your
