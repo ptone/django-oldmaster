@@ -1652,10 +1652,9 @@ processing at the first positive match.
 Writing an authentication backend
 ---------------------------------
 
-An authentication backend is a class that implements two methods:
-``get_user(user_id)`` and ``authenticate(**credentials)``. It must also set three
-attributes: ``supports_anonymous_user``, ``supports_inactive_user``,
-and ``supports_object_permissions``.
+An authentication backend is a class that implements two required methods:
+``get_user(user_id)`` and ``authenticate(**credentials)``, as well as a set of
+optional permission related :ref:`authorization methods <authorization_methods>`.
 
 The ``get_user`` method takes a ``user_id`` -- which could be a username,
 database ID or whatever -- and returns a ``User`` object.
@@ -1703,10 +1702,9 @@ object the first time a user authenticates::
         ADMIN_PASSWORD = 'sha1$4e987$afbcf42e21bd417fb71db8c66b321e9fc33051de'
         """
 
-        # required attributes for auth backends:
-        supports_anonymous_user = False
+        # required transient attribute for auth backends
+        # (see deprecation timeline)
         supports_inactive_user = False
-        supports_object_permissions = False
 
         def authenticate(self, username=None, password=None):
             login_valid = (settings.ADMIN_LOGIN == username)
@@ -1730,6 +1728,8 @@ object the first time a user authenticates::
                 return User.objects.get(pk=user_id)
             except User.DoesNotExist:
                 return None
+
+.. _authorization_methods:
 
 Handling authorization in custom backends
 -----------------------------------------
@@ -1761,9 +1761,9 @@ fairly simply::
                 return False
 
 This gives full permissions to the user granted access in the above example.
-Notice that the backend auth functions all take the user object as an argument,
-and they also accept the same arguments given to the associated
-:class:`django.contrib.auth.models.User` functions.
+Notice that the backend auth functions all take the user object, which may be
+an anonymous user, as an argument, and they also accept the same arguments
+given to the associated :class:`django.contrib.auth.models.User` functions.
 
 A full authorization implementation can be found in
 `django/contrib/auth/backends.py`_, which is the default backend and queries
@@ -1785,26 +1785,27 @@ authorize anonymous users to browse most of the site, and many allow anonymous
 posting of comments etc.
 
 Django's permission framework does not have a place to store permissions for
-anonymous users. However, it has a foundation that allows custom authentication
-backends to specify authorization for anonymous users. This is especially useful
-for the authors of re-usable apps, who can delegate all questions of authorization
-to the auth backend, rather than needing settings, for example, to control
-anonymous access. An authorization backend must set ``supports_anonymous_user`` to
-indicate whether or not it will handle anonymous user authentication.
+anonymous users. However, the user object passed to an authentication backend
+may be an :class:`django.contrib.auth.models.AnonymousUser` object, allowing
+the backend to specify custom authorization behaviro for anonymous users. This
+is especially useful for the authors of re-usable apps, who can delegate all
+questions of authorization to the auth backend, rather than needing settings,
+for example, to control anonymous access.
 
+.. _inactive_auth:
 
 Authorization for inactive users
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. versionadded:: 1.3
+.. versionchanged:: 1.3
 
 An inactive user is a one that is authenticated but has its attribute
 ``is_active`` set to ``False``. However this does not mean they are not
 authorized to do anything. For example they are allowed to activate their
 account.
 
-The support for anonymous users in the permission system allows for
-anonymous users to have permissions to do something while inactive
+The support for anonymous users in the permission system allows for a scenario
+where anonymous users have permissions to do something while inactive
 authenticated users do not.
 
 To enable this on your own backend, you must set the class attribute
@@ -1819,9 +1820,11 @@ passed to the authorization methods.
 
 
 Handling object permissions
----------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Django's permission framework has a foundation for object permissions, though
 there is no implementation for it in the core. That means that checking for
 object permissions will always return ``False`` or an empty list (depending on
-the check performed).
+the check performed). An authentication backend will receive the keyword
+parameters ``obj`` and ``user_obj`` for each object related authorization
+method and can return the object level permission as appropriate.
