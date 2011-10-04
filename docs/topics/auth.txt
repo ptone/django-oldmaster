@@ -1767,7 +1767,7 @@ all take the user object, which may be an anonymous user, as an argument.
 
 A full authorization implementation can be found in the ``ModelBackend`` class
 in `django/contrib/auth/backends.py`_, which is the default backend and queries
-the ``auth_permission`` table most of the time. If you wish to only provide
+the ``auth_permission`` table most of the time. If you wish to provide
 custom behavior for only part of the backend API, you can take advantage of
 Python inheritence and subclass ``ModelBackend`` instead of implementing the
 complete API in a custom backend.
@@ -1790,7 +1790,7 @@ posting of comments etc.
 Django's permission framework does not have a place to store permissions for
 anonymous users. However, the user object passed to an authentication backend
 may be an :class:`django.contrib.auth.models.AnonymousUser` object, allowing
-the backend to specify custom authorization behaviro for anonymous users. This
+the backend to specify custom authorization behavior for anonymous users. This
 is especially useful for the authors of re-usable apps, who can delegate all
 questions of authorization to the auth backend, rather than needing settings,
 for example, to control anonymous access.
