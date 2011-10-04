@@ -1634,8 +1634,8 @@ By default, :setting:`AUTHENTICATION_BACKENDS` is set to::
     ('django.contrib.auth.backends.ModelBackend',)
 
 That's the basic authentication scheme that checks the Django users database
-and basic queries the builtin permissions, it does not provide, out-of-the-box
-protection against brute force attacks through any rate limiting mechanism.
+and queries the builtin permissions, it does not provide, out-of-the-box
+protection against brute force attacks via any rate limiting mechanism.
 
 The order of :setting:`AUTHENTICATION_BACKENDS` matters, so if the same
 username and password is valid in multiple backends, Django will stop
@@ -1761,16 +1761,16 @@ fairly simply::
                 return False
 
 This gives full permissions to the user granted access in the above example.
-Notice that the backend auth functions all take the user object, which may be
-an anonymous user, as an argument, and they also accept the same arguments
-given to the associated :class:`django.contrib.auth.models.User` functions.
+Notice that in addition to the same arguments given to the associated
+:class:`django.contrib.auth.models.User` functions, the backend auth functions
+all take the user object, which may be an anonymous user, as an argument.
 
-A full authorization implementation can be found in
-`django/contrib/auth/backends.py`_, which is the default backend and queries
+A full authorization implementation can be found in the ``ModelBackend`` class
+in `django/contrib/auth/backends.py`_, which is the default backend and queries
 the ``auth_permission`` table most of the time. If you wish to only provide
 custom behavior for only part of the backend API, you can take advantage of
-Python inheritence and subclass the ``ModelBackend`` class instead of
-implementing the complete API in a custom backend.
+Python inheritence and subclass ``ModelBackend`` instead of implementing the
+complete API in a custom backend.
 
 .. _django/contrib/auth/backends.py: http://code.djangoproject.com/browser/django/trunk/django/contrib/auth/backends.py
 
