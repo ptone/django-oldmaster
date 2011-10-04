@@ -1633,7 +1633,7 @@ By default, :setting:`AUTHENTICATION_BACKENDS` is set to::
 
     ('django.contrib.auth.backends.ModelBackend',)
 
-That's the basic authentication scheme that checks the Django users database
+That's the basic authentication backend that checks the Django users database
 and queries the builtin permissions, it does not provide, out-of-the-box
 protection against brute force attacks via any rate limiting mechanism.
 
