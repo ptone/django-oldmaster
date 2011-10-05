@@ -4,15 +4,35 @@ Django Deprecation Timeline
 
 This document outlines when various pieces of Django will be removed or altered
 in a backward incompatible way, following their deprecation, as per the
-:ref:`deprecation policy <internal-release-deprecation-policy>`.
+:ref:`deprecation policy <internal-release-deprecation-policy>`. More details
+about each item can often be found in the release notes of two versions prior.
+
+1.3
+---
+
+    .. versionchanged:: 1.1
+
+    * ``AdminSite.root()``.  This release will remove the old method for
+      hooking up admin URLs.  This has been deprecated since the 1.1
+      release.
+
+    * Authentication backends need to define the boolean attributes
+      ``supports_object_permissions`` and ``supports_anonymous_user`` until
+      version 1.4, at which point it will be assumed that all backends will
+      support these options.
 
 1.4
 ---
 
-    * ``CsrfResponseMiddleware`` will be replaced with the template tag method
-      for inserting the CSRF token.  ``CsrfMiddleware``, which combines
-      ``CsrfResponseMiddleware`` and ``CsrfViewMiddleware``, will also be
-      removed.
+    .. versionchanged:: 1.2
+
+    * ``CsrfResponseMiddleware`` and ``CsrfMiddleware`` will be removed.
+      Their use has been replaced with the prefered template tag method for
+      inserting the CSRF token.  ``CsrfViewMiddleware`` remains and is enabled
+      by default.
+
+    * The :mod:`django.contrib.gis.db.backend` module will be removed in favor
+      of the specific backends.
 
     * The old imports for CSRF functionality (``django.contrib.csrf.*``),
       which moved to core in 1.2, will be removed.
@@ -30,7 +50,7 @@ in a backward incompatible way, following their deprecation, as per the
       removed.
 
     * The ``get_db_prep_save``, ``get_db_prep_value`` and
-      ``get_db_prep_lookup`` methods must support multiple databases.
+      ``get_db_prep_lookup`` methods will have to support multiple databases.
 
     * The ``Message`` model (in ``django.contrib.auth``), its related
       manager in the ``User`` model (``user.message_set``), and the
@@ -44,7 +64,7 @@ in a backward incompatible way, following their deprecation, as per the
 
     * Authentication backends will need to support the ``obj`` parameter for
       permission checking. The ``supports_object_permissions`` variable
-      will no longer be checked and can be removed from custom backends
+      will no longer be checked and can be removed from custom backends.
 
     * Authentication backends will need to support the ``AnonymousUser`` class
       being passed to all methods dealing with permissions.  The
@@ -79,7 +99,7 @@ in a backward incompatible way, following their deprecation, as per the
       remove the old method in favor of the new method in
       ``django.contrib.auth.context_processors.auth``.
 
-    * The ``postgresql`` will no longer be supported, use the
+    * The ``postgresql`` database backend will be removed, use the
       ``postgresql_psycopg2`` backend instead.
 
     * The ``no`` language code will be replaced by the ``nb``
@@ -99,6 +119,8 @@ in a backward incompatible way, following their deprecation, as per the
 1.5
 ---
 
+    .. versionchanged:: 1.3
+
     * The ``mod_python`` request handler will be removed. The ``mod_wsgi``
       handler should be used instead.
 
@@ -117,12 +139,9 @@ in a backward incompatible way, following their deprecation, as per the
       :func:`django.contrib.formtools.utils.security_hash` will be removed,
       instead use :func:`django.contrib.formtools.utils.form_hmac`
 
-    * The following function-based generic view modules will be removed:
-
-          * :mod:`django.views.generic.create_update`
-          * :mod:`django.views.generic.date_based`
-          * :mod:`django.views.generic.list_detail`
-          * :mod:`django.views.generic.simple`
+    * The function-based generic view modules will be removed in favor of their
+      class-based equivalents, outlined :doc:`here
+      </topics/generic-views-migration>`:
 
     * The :class:`~django.core.servers.basehttp.AdminMediaHandler` will be
       removed.  In its place use
@@ -167,10 +186,12 @@ in a backward incompatible way, following their deprecation, as per the
 1.6
 ---
 
+    .. versionchanged:: 1.4
+
     * The compatibility modules ``django.utils.copycompat`` and
       ``django.utils.hashcompat`` as well as the functions
       ``django.utils.itercompat.all`` and ``django.utils.itercompat.any`` will
-      be removed. The native versions should be used instead.
+      be removed. The Python builtin versions should be used instead.
 
     * The :func:`~django.views.decorators.csrf.csrf_response_exempt` and
       :func:`~django.views.decorators.csrf.csrf_view_exempt` decorators will
@@ -208,7 +229,7 @@ in a backward incompatible way, following their deprecation, as per the
       :func:`django.contrib.admin.templatetags.adminmedia.admin_media_prefix`
       will be removed in favor of the generic static files handling.
 
-    * The builin truncation functions :func:`django.utils.text.truncate_words`
+    * The builtin truncation functions :func:`django.utils.text.truncate_words`
       and :func:`django.utils.text.truncate_html_words` will be removed in
       favor of the ``django.utils.text.Truncator`` class.
 
