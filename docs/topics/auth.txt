@@ -101,12 +101,13 @@ Fields
 
         This doesn't necessarily control whether or not the user can log in.
         Authentication backends aren't required to check for the ``is_active``
-        flag, so if you want to reject a login based on ``is_active`` being
-        ``False``, it's up to you to check that in your own login view.
-        However, the :class:`~django.contrib.auth.forms.AuthenticationForm`
-        used by the :func:`~django.contrib.auth.views.login` view *does*
-        perform this check, as do the permission-checking methods such as
-        :meth:`~models.User.has_perm` and the authentication in the Django
+        flag, and the default backends do not. If you want to reject a login
+        based on ``is_active`` being ``False``, it's up to you to check that in
+        your own login view or a custom authentication backend. However, the
+        :class:`~django.contrib.auth.forms.AuthenticationForm` used by the
+        :func:`~django.contrib.auth.views.login` view (which is the default)
+        *does* perform this check, as do the permission-checking methods such
+        as :meth:`~models.User.has_perm` and the authentication in the Django
         admin. All of those functions/methods will return ``False`` for
         inactive users.
 
