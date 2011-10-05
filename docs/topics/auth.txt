@@ -1635,7 +1635,9 @@ By default, :setting:`AUTHENTICATION_BACKENDS` is set to::
 
 That's the basic authentication backend that checks the Django users database
 and queries the builtin permissions, it does not provide, out-of-the-box
-protection against brute force attacks via any rate limiting mechanism.
+protection against brute force attacks via any rate limiting mechanism. You may
+either implement your own rate limiting mechanism in a custom auth backend, or
+use the mechanisms provided by most Web servers (such as NginX or Apache).
 
 The order of :setting:`AUTHENTICATION_BACKENDS` matters, so if the same
 username and password is valid in multiple backends, Django will stop
