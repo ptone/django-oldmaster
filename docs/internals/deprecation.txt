@@ -82,9 +82,9 @@ about each item can often be found in the release notes of two versions prior.
       ``django.utils.formats.get_format()`` to get the appropriate
       formats.
 
-    * In ``django.forms.fields``: ``DEFAULT_DATE_INPUT_FORMATS``,
+    * In ``django.forms.fields``, the constants: ``DEFAULT_DATE_INPUT_FORMATS``,
       ``DEFAULT_TIME_INPUT_FORMATS`` and
-      ``DEFAULT_DATETIME_INPUT_FORMATS``. Use
+      ``DEFAULT_DATETIME_INPUT_FORMATS`` will be removed. Use
       ``django.utils.formats.get_format()`` to get the appropriate
       formats.
 
