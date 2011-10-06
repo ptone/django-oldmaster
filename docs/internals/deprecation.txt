@@ -31,11 +31,11 @@ about each item can often be found in the release notes of two versions prior.
       inserting the CSRF token.  ``CsrfViewMiddleware`` remains and is enabled
       by default.
 
-    * The :mod:`django.contrib.gis.db.backend` module will be removed in favor
-      of the specific backends.
-
     * The old imports for CSRF functionality (``django.contrib.csrf.*``),
       which moved to core in 1.2, will be removed.
+
+    * The :mod:`django.contrib.gis.db.backend` module will be removed in favor
+      of the specific backends.
 
     * ``SMTPConnection`` will be removed in favor of a generic E-mail backend API.
 
