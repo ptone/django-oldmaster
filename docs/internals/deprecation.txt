@@ -12,9 +12,8 @@ about each item can often be found in the release notes of two versions prior.
 
     .. versionchanged:: 1.1
 
-    * ``AdminSite.root()``.  This release will remove the old method for
-      hooking up admin URLs.  This has been deprecated since the 1.1
-      release.
+    * ``AdminSite.root()``.  This method of hooking up the admin URLs will be
+      removed in favor of including admin.site.urls.
 
     * Authentication backends need to define the boolean attributes
       ``supports_object_permissions`` and ``supports_anonymous_user`` until
@@ -26,10 +25,9 @@ about each item can often be found in the release notes of two versions prior.
 
     .. versionchanged:: 1.2
 
-    * ``CsrfResponseMiddleware`` and ``CsrfMiddleware`` will be removed.
-      Their use has been replaced with the prefered template tag method for
-      inserting the CSRF token.  ``CsrfViewMiddleware`` remains and is enabled
-      by default.
+    * ``CsrfResponseMiddleware`` and ``CsrfMiddleware`` will be removed.  Use
+      the {% csrf_token %} template tag inside forms to enable CSRF
+      protection. ``CsrfViewMiddleware`` remains and is enabled by default.
 
     * The old imports for CSRF functionality (``django.contrib.csrf.*``),
       which moved to core in 1.2, will be removed.
@@ -63,7 +61,7 @@ about each item can often be found in the release notes of two versions prior.
       context processor.
 
     * Authentication backends will need to support the ``obj`` parameter for
-      permission checking. The ``supports_object_permissions`` variable
+      permission checking. The ``supports_object_permissions`` attribute
       will no longer be checked and can be removed from custom backends.
 
     * Authentication backends will need to support the ``AnonymousUser`` class
@@ -77,10 +75,9 @@ about each item can often be found in the release notes of two versions prior.
       backwards compatibility.
 
     * ``django.utils.translation.get_date_formats()`` and
-      ``django.utils.translation.get_partial_date_formats()``. These
-      functions will be replaced by the locale aware formatting; use
-      ``django.utils.formats.get_format()`` to get the appropriate
-      formats.
+      ``django.utils.translation.get_partial_date_formats()``. These functions
+      will be removed; use the locale-aware
+      ``django.utils.formats.get_format()`` to get the appropriate formats.
 
     * In ``django.forms.fields``, the constants: ``DEFAULT_DATE_INPUT_FORMATS``,
       ``DEFAULT_TIME_INPUT_FORMATS`` and
@@ -102,8 +99,8 @@ about each item can often be found in the release notes of two versions prior.
     * The ``postgresql`` database backend will be removed, use the
       ``postgresql_psycopg2`` backend instead.
 
-    * The ``no`` language code will be replaced by the ``nb``
-      language code.
+    * The ``no`` language code will be removed and has been replaced by the
+      ``nb`` language code.
 
     * Authentication backends will need to define the boolean attribute
       ``supports_inactive_user`` until version 1.5 when it will be assumed that
@@ -157,8 +154,8 @@ about each item can often be found in the release notes of two versions prior.
 
     * Authentication backends will need to support an inactive user
       being passed to all methods dealing with permissions.
-      The ``supports_inactive_user`` variable will no longer be checked
-      and can be removed.
+      The ``supports_inactive_user`` attribute will no longer be checked
+      and can be removed from custom backends.
 
     * :meth:`~django.contrib.gis.geos.GEOSGeometry.transform` will raise
       a :class:`~django.contrib.gis.geos.GEOSException` when called
