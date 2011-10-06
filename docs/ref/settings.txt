@@ -2102,11 +2102,10 @@ WSGI_APPLICATION
 
 .. versionadded:: 1.4
 
-Default: ``'django.core.handlers.wsgi.application'``
+Default: ``None``
 
-The import name of the WSGI application used . Otherwise this shall
-point to an actual WSGI application.
-
+The full Python path of the WSGI application object to use, as created
+by :djadmin:`django-admin.py startproject <startproject>`.
 
 .. setting:: YEAR_MONTH_FORMAT
 

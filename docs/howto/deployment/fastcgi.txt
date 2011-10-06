@@ -1,5 +1,3 @@
-.. fastcgi:
-
 ============================================
 How to use Django with FastCGI, SCGI, or AJP
 ============================================
@@ -7,7 +5,7 @@ How to use Django with FastCGI, SCGI, or AJP
 .. highlight:: bash
 
 Although the current preferred setup for running Django is :doc:`Apache with
-mod_wsgi </howto/deployment/modwsgi>`, many people use shared hosting, on
+mod_wsgi </howto/deployment/wsgi/modwsgi>`, many people use shared hosting, on
 which protocols such as FastCGI, SCGI or AJP are the only viable options. In
 some setups, these protocols may provide better performance than mod_wsgi_.
 
