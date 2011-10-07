@@ -2,7 +2,7 @@
 How to use WSGI
 ===============
 
-Django's prefered platform of deployment is WSGI -- the "Web Server Gateway
+Django's preferred platform of deployment is WSGI -- the "Web Server Gateway
 Interface" standard as defined in :pep:`333` for web servers and application
 servers that communicate with web applications.
 
