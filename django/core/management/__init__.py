@@ -103,23 +103,6 @@ def get_commands():
         except (AttributeError, EnvironmentError, ImportError):
             apps = []
 
-        # Find the project directory, if any
-        if "DJANGO_SETTINGS_MODULE" in os.environ:
-            # Defining "project directory" relative to the settings module is
-            # dumb, but we keep doing it for backwards compatibility. Here it's
-            # just the default directory for startapp.
-            from django.conf import settings
-            settings_mod = import_module(settings.SETTINGS_MODULE)
-            if '__init__.py' in settings_mod.__file__:
-                path = os.path.dirname(settings_mod.__file__)
-            else:
-                path = settings_mod.__file__
-            project_directory, settings_filename = os.path.split(path)
-            if project_directory == os.curdir or not project_directory:
-                project_directory = os.getcwd()
-        else:
-            project_directory = None
-
         # Find and load the management module for each installed app.
         for app_name in apps:
             try:
@@ -128,17 +111,6 @@ def get_commands():
                                        for name in find_commands(path)]))
             except ImportError:
                 pass # No management module - ignore this app
-
-        if project_directory:
-            # Remove the "startproject" command from self.commands, because
-            # that's a django-admin.py command, not a manage.py command.
-            del _commands['startproject']
-
-            # Override the startapp command so that it always uses the
-            # project_directory, not the current working directory
-            # (which is default).
-            from django.core.management.commands.startapp import ProjectCommand
-            _commands['startapp'] = ProjectCommand(project_directory)
 
     return _commands
 
