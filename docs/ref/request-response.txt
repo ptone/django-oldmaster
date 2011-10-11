@@ -719,7 +719,7 @@ types of HTTP responses. Like ``HttpResponse``, these subclasses live in
 :mod:`django.http`.
 
 .. note:: If a custom subclass of ``HttpResponse`` implements a ``render``
-    method, it will be considered to emulating the behavior of
+    method, it will be considered to emulate the behavior of
     :class:`~django.template.response.TemplateResponse` and must return an
     ``HttpResponse``.
 
