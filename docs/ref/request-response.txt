@@ -713,9 +713,15 @@ Methods
 HttpResponse subclasses
 -----------------------
 
+
 Django includes a number of ``HttpResponse`` subclasses that handle different
 types of HTTP responses. Like ``HttpResponse``, these subclasses live in
 :mod:`django.http`.
+
+.. note:: If a custom subclass of ``HttpResponse`` implements a ``render``
+    method, it will be considered to be a class complying to the behavior of
+    :doc:`TemplateResponse </ref/template-response>` and must return an
+    ``HttpResponse``.
 
 .. class:: HttpResponseRedirect
 
