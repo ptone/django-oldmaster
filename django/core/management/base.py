@@ -380,10 +380,16 @@ def copy_helper(style, app_or_project, name, directory, other_name=''):
             message = 'use only numbers, letters and underscores'
         raise CommandError("%r is not a valid %s name. Please %s." % (name, app_or_project, message))
     top_dir = os.path.join(directory, name)
-    try:
-        os.mkdir(top_dir)
-    except OSError, e:
-        raise CommandError(e)
+    if os.path.exists(top_dir):
+        if app_or_project == 'app' and os.path.exists(os.path.join(top_dir, 'models.py')):
+            raise CommandError("target directory has already been set up as a Django app")
+        if app_or_project == 'project' and os.path.exists(os.path.join(top_dir, 'manage.py')):
+            raise CommandError("target directory has already been set up as a Django project")
+    else:
+        try:
+            os.mkdir(top_dir)
+        except OSError, e:
+            raise CommandError(e)
 
     # Determine where the app or project templates are. Use
     # django.__path__[0] because we don't know into which directory
@@ -393,7 +399,9 @@ def copy_helper(style, app_or_project, name, directory, other_name=''):
     for d, subdirs, files in os.walk(template_dir):
         relative_dir = d[len(template_dir)+1:].replace('%s_name' % app_or_project, name)
         if relative_dir:
-            os.mkdir(os.path.join(top_dir, relative_dir))
+            target_dir = os.path.join(top_dir, relative_dir)
+            if not os.path.exists(target_dir):
+                os.mkdir(target_dir)
         for subdir in subdirs[:]:
             if subdir.startswith('.'):
                 subdirs.remove(subdir)
