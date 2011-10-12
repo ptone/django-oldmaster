@@ -412,6 +412,9 @@ def copy_helper(style, app_or_project, name, directory, other_name=''):
                 continue
             path_old = os.path.join(d, f)
             path_new = os.path.join(top_dir, relative_dir, f.replace('%s_name' % app_or_project, name))
+            if os.path.exists(path_new):
+                raise CommandError("%s already exists, overlaying a project or app into an existing directory won't replace conflicting files" 
+                        % path_new)
             fp_old = open(path_old, 'r')
             fp_new = open(path_new, 'w')
             fp_new.write(fp_old.read().replace('{{ %s_name }}' % app_or_project, name).replace('{{ %s_name }}' % other, other_name))
