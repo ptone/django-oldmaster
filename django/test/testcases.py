@@ -5,6 +5,7 @@ import sys
 from functools import wraps
 from urlparse import urlsplit, urlunsplit
 from xml.dom.minidom import parseString, Node
+from profilehooks import profile
 
 from django.conf import settings
 from django.core import mail
@@ -30,6 +31,10 @@ __all__ = ('DocTestRunner', 'OutputChecker', 'TestCase', 'TransactionTestCase',
 normalize_long_ints = lambda s: re.sub(r'(?<![\w])(\d+)L(?![\w])', '\\1', s)
 normalize_decimals = lambda s: re.sub(r"Decimal\('(\d+(\.\d*)?)'\)",
                                 lambda m: "Decimal(\"%s\")" % m.groups()[0], s)
+
+@profile
+def profiled_flush(db):
+    call_command('flush', verbosity=0, interactive=False, database=db)
 
 def to_list(value):
     """
@@ -362,7 +367,8 @@ class TransactionTestCase(SimpleTestCase):
         else:
             databases = [DEFAULT_DB_ALIAS]
         for db in databases:
-            call_command('flush', verbosity=0, interactive=False, database=db)
+            # call_command('flush', verbosity=0, interactive=False, database=db)
+            profiled_flush(db)
 
             if hasattr(self, 'fixtures'):
                 # We have to use this slightly awkward syntax due to the fact
