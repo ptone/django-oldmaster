@@ -68,6 +68,32 @@ class ContentTypesTests(TestCase):
         ContentType.objects.get_for_model(ContentType)
         self.assertEqual(2, len(db.connection.queries))
 
+    def test_get_for_models(self):
+        # Empty cache.
+        results = {
+            ContentType: ContentType.objects.get_for_model(ContentType),
+            FooWithUrl: ContentType.objects.get_for_model(FooWithUrl),
+        }
+
+        ContentType.objects.clear_cache()
+        with self.assertNumQueries(1):
+            cts = ContentType.objects.get_for_models(ContentType, FooWithUrl)
+        self.assertEqual(cts, results)
+
+        ContentType.objects.clear_cache()
+        # Partial cache
+        ContentType.objects.get_for_model(ContentType)
+        with self.assertNumQueries(1):
+            cts = ContentType.objects.get_for_models(ContentType, FooWithUrl)
+        self.assertEqual(cts, results)
+
+        # Full cache
+        with self.assertNumQueries(0):
+            cts = ContentType.objects.get_for_models(ContentType, FooWithUrl)
+        self.assertEqual(cts, results)
+
+
+
     def test_shortcut_view(self):
         """
         Check that the shortcut view (used for the admin "view on site"
