@@ -259,47 +259,26 @@ class WSGIHandler(base.BaseHandler):
         return response
 
 
-# If no WSGI_APPLICATION is configured, this one will be used.
-application = WSGIHandler()
-
-
-class DjangoWSGIApplication(object):
+def get_wsgi_application():
     """
-    Loads and proxies to the actual WSGI application as configured by the user
-    in settings.WSGI_APPLICATION.
+    Loads and returns the WSGI application as configured by the user in
+    settings.WSGI_APPLICATION.
 
-    By default this will be the ``application`` object in ``wsgi.py``, which by
-    default will be the `application` object above, possibly with middlewares
-    applied.
+    With the default startproject setup, this will be the ``application``
+    object in ``wsgi.py``, which by default will be an instance of
+    ``WSGIHandler``, possibly with middlewares applied.
+
+    If settings.WSGI_APPLICATION is not set (is ``None``), we just instantiate
+    and return a ``WSGIHandler``.
 
     """
-    def __init__(self):
-        self._instance = None
-        self._instance_lock = Lock()
-
-    def _load_application(self):
-        from django.conf import settings
-        app_path = getattr(settings, 'WSGI_APPLICATION')
-        if app_path is None:
-            return application
-        try:
-            module_name, attr = app_path.rsplit('.', 1)
-            return getattr(import_module(module_name), attr)
-        except (ImportError, AttributeError), e:
-            raise ImproperlyConfigured("WSGI application '%s' could not "
-                                       "be loaded: %s" % (app_path, e))
-
-    def __call__(self, environ, start_response):
-        # Non-atomic check, avoids taking a lock at each call of this method
-        if self._instance is None:
-            with self._instance_lock:
-                # Atomic check, prevents concurrent initialization of self._instance
-                if self._instance is None:
-                    self._instance = self._load_application()
-        return self._instance(environ, start_response)
-
-
-# The application object that proxies to whatever application the user has
-# configured in the ``WSGI_APPLICATION`` setting. This will be used by
-# ``runserver``.
-django_application = DjangoWSGIApplication()
+    from django.conf import settings
+    app_path = getattr(settings, 'WSGI_APPLICATION')
+    if app_path is None:
+        return WSGIHandler()
+    try:
+        module_name, attr = app_path.rsplit('.', 1)
+        return getattr(import_module(module_name), attr)
+    except (ImportError, AttributeError), e:
+        raise ImproperlyConfigured("WSGI application '%s' could not "
+                                   "be loaded: %s" % (app_path, e))

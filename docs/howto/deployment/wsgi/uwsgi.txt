@@ -112,7 +112,7 @@ Starting the server
 Example command line for a Web server that understand the uWSGI protocol::
 
     uwsgi --chdir=/path/to/your/project
-        --module='wsgi:application' \
+        --module='mysite.wsgi:application' \
         --env DJANGO_SETTINGS_MODULE=mysite.settings \
         --master --pidfile=/tmp/project-master.pid \
         --socket=127.0.0.1:49152 \      # can also be a file
@@ -125,13 +125,18 @@ Example command line for a Web server that understand the uWSGI protocol::
         --home=/path/to/virtual/env \   # optionnal path to a virtualenv
         --daemonize=/var/log/uwsgi/yourproject.log      # background the process
 
-Django specific options are:
+This assumes that you have a top-level project package named ``mysite``, and
+within it a module :file:`mysite/wsgi.py` that contains a WSGI ``application``
+object. This is the layout you will have if you ran ``django-admin.py
+startproject mysite`` (using your own project name in place of ``mysite``).
 
-* ``chdir``: the path to the directory that needs to be on Python's import path; usually this will be the directory containing your ``manage.py`` file
-* ``module``: WSGI module to use, probably the ``wsgi`` module which
+The Django-specific options here are:
+
+* ``chdir``: the path to the directory that needs to be on Python's import path; i.e. the directory containing the ``mysite`` package.
+* ``module``: The WSGI module to use, probably the ``mysite.wsgi`` module which
   :djadmin:`startproject` creates.
-* ``pythonpath``: optional path to your project virtualenv
 * ``env``: should probably contain at least ``DJANGO_SETTINGS_MODULE``
+* ``home``: optional path to your project virtualenv
 
 Example ini configuration file::
 
