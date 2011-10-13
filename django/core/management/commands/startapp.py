@@ -35,13 +35,3 @@ class Command(LabelCommand):
 
         copy_helper(self.style, 'app', app_name, directory, project_name)
 
-class ProjectCommand(Command):
-    help = ("Creates a Django app directory structure for the given app name"
-            " in this project's directory.")
-
-    def __init__(self, project_directory):
-        super(ProjectCommand, self).__init__()
-        self.project_directory = project_directory
-
-    def handle_label(self, app_name, **options):
-        super(ProjectCommand, self).handle_label(app_name, self.project_directory, **options)
