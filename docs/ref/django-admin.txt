@@ -899,13 +899,23 @@ startapp <appname>
 Creates a Django app directory structure for the given app name in the current
 directory.
 
-startproject <projectname>
+startproject <projectname> [destination]
 --------------------------
 
 .. django-admin:: startproject
 
-Creates a Django project directory structure for the given project name in the
-current directory.
+Creates a Django project directory containing a manage.py file and a project
+package (containing settings.py file and other project scaffolding). If only
+the projectname is given, both the project directory and project package will
+be named <projectname> and the project directory will be created in the current
+working directory. If there is an existing directory with that name, the
+project directory contents will be written into it so long as there are no
+conflicts.
+
+If the optional destination is provided, it will be used for the project
+directory, and the named project package and manage.py will be placed there. On
+most systems the use of '.' to denote the current working directory is valid
+for the destination.
 
 syncdb
 ------
