@@ -42,7 +42,7 @@ def get_internal_wsgi_application():
     directly.
 
     If settings.WSGI_APPLICATION is not set (is ``None``), we just return
-    whatever ``django.core.get_wsgi_application`` returns.
+    whatever ``django.core.wsgi.get_wsgi_application`` returns.
 
     """
     from django.conf import settings
