@@ -7,6 +7,7 @@ from urlparse import urlsplit, urlunsplit
 from xml.dom.minidom import parseString, Node
 from profilehooks import profile
 
+from django.db.models import signals
 from django.conf import settings
 from django.core import mail
 from django.core.exceptions import ValidationError
@@ -358,6 +359,8 @@ class TransactionTestCase(SimpleTestCase):
         self._fixture_setup()
         self._urlconf_setup()
         mail.outbox = []
+        signals.post_syncdb.disconnect(
+                dispatch_uid = "django.contrib.auth.management.create_permissions")
 
     def _fixture_setup(self):
         # If the test case has a multi_db=True flag, flush all databases.
