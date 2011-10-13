@@ -407,9 +407,10 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 USE_X_FORWARDED_HOST = False
 
-# The Python dotted path to the WSGI application that `runserver` should
-# use. If `None`, an instance of 'django.core.handlers.wsgi.WSGIHandler' is
-# used. Otherwise this should point to an actual WSGI application object.
+# The Python dotted path to the WSGI application that Django's internal servers
+# (runserver, runfcgi) will use. If `None`, the return value of
+# 'django.core.wsgi.get_wsgi_application' is used. Otherwise this should point
+# to an actual WSGI application object.
 WSGI_APPLICATION = None
 
 ##############

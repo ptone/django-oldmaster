@@ -9,12 +9,10 @@ except ImportError:
 
 from django import http
 from django.core import signals
-from django.core.exceptions import ImproperlyConfigured
 from django.core.handlers import base
 from django.core.urlresolvers import set_script_prefix
 from django.utils import datastructures
 from django.utils.encoding import force_unicode, iri_to_uri
-from django.utils.importlib import import_module
 from django.utils.log import getLogger
 
 logger = getLogger('django.request')
@@ -257,28 +255,3 @@ class WSGIHandler(base.BaseHandler):
             response_headers.append(('Set-Cookie', str(c.output(header=''))))
         start_response(status, response_headers)
         return response
-
-
-def get_wsgi_application():
-    """
-    Loads and returns the WSGI application as configured by the user in
-    settings.WSGI_APPLICATION.
-
-    With the default startproject setup, this will be the ``application``
-    object in ``wsgi.py``, which by default will be an instance of
-    ``WSGIHandler``, possibly with middlewares applied.
-
-    If settings.WSGI_APPLICATION is not set (is ``None``), we just instantiate
-    and return a ``WSGIHandler``.
-
-    """
-    from django.conf import settings
-    app_path = getattr(settings, 'WSGI_APPLICATION')
-    if app_path is None:
-        return WSGIHandler()
-    try:
-        module_name, attr = app_path.rsplit('.', 1)
-        return getattr(import_module(module_name), attr)
-    except (ImportError, AttributeError), e:
-        raise ImproperlyConfigured("WSGI application '%s' could not "
-                                   "be loaded: %s" % (app_path, e))
