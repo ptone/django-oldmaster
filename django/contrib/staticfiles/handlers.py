@@ -63,6 +63,6 @@ class StaticFilesHandler(WSGIHandler):
         return super(StaticFilesHandler, self).get_response(request)
 
     def __call__(self, environ, start_response):
-        if self._should_handle(environ['PATH_INFO']):
-            return super(StaticFilesHandler, self).__call__(environ, start_response)
-        return self.application(environ, start_response)
+        if not self._should_handle(environ['PATH_INFO']):
+            return self.application(environ, start_response)
+        return super(StaticFilesHandler, self).__call__(environ, start_response)
