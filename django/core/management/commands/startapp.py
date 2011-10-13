@@ -17,13 +17,6 @@ class Command(LabelCommand):
         if directory is None:
             directory = os.getcwd()
 
-        # Determine the project_name by using the basename of directory,
-        # which should be the full path of the project directory (or the
-        # current directory if no directory was passed).
-        project_name = os.path.basename(directory)
-        if app_name == project_name:
-            raise CommandError("You cannot create an app with the same name"
-                               " (%r) as your project." % app_name)
 
         # Check that the app_name cannot be imported.
         try:
