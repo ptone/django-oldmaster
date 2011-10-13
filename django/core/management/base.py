@@ -357,7 +357,8 @@ class NoArgsCommand(BaseCommand):
         """
         raise NotImplementedError()
 
-def copy_helper(style, app_or_project, name, directory, other_name=''):
+def copy_helper(style, app_or_project, name, directory, other_name='', 
+        destination_dir=None):
     """
     Copies either a Django application layout template or a Django project
     layout template into the specified directory.
@@ -379,7 +380,10 @@ def copy_helper(style, app_or_project, name, directory, other_name=''):
         else:
             message = 'use only numbers, letters and underscores'
         raise CommandError("%r is not a valid %s name. Please %s." % (name, app_or_project, message))
-    top_dir = os.path.join(directory, name)
+    if destination_dir:
+        top_dir = os.path.join(directory, destination_dir)
+    else:
+        top_dir= os.path.join(directory, name)
     if os.path.exists(top_dir):
         if app_or_project == 'app' and os.path.exists(os.path.join(top_dir, 'models.py')):
             raise CommandError("target directory has already been set up as a Django app")
