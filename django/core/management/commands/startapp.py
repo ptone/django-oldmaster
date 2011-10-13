@@ -26,5 +26,5 @@ class Command(LabelCommand):
         else:
             raise CommandError("%r conflicts with the name of an existing Python module and cannot be used as an app name. Please try another name." % app_name)
 
-        copy_helper(self.style, 'app', app_name, directory, project_name)
+        copy_helper(self.style, 'app', app_name, directory)
 
