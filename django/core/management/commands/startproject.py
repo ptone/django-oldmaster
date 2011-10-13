@@ -35,7 +35,7 @@ class Command(BaseCommand):
         copy_helper(self.style, 'project', project_name, directory, destination_dir=destination_dir)
 
         # Create a random SECRET_KEY hash, and put it in the main settings.
-        main_settings_file = os.path.join(directory, project_name, project_name, 'settings.py')
+        main_settings_file = os.path.join(directory, destination_dir or project_name, project_name, 'settings.py')
         settings_contents = open(main_settings_file, 'r').read()
         fp = open(main_settings_file, 'w')
         secret_key = ''.join([choice('abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)') for i in range(50)])
