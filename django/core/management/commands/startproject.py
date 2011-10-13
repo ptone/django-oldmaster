@@ -5,7 +5,7 @@ import re
 from random import choice
 
 class Command(BaseCommand):
-    help = "Creates a Django project directory structure for the given project name in the current directory or optionaly in the given directory."
+    help = "Creates a Django project directory structure for the given project name in the current directory or optionally in the given directory."
     args = "[projectname] [optional destination directory]"
 
     requires_model_validation = False
