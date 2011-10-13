@@ -2104,11 +2104,14 @@ WSGI_APPLICATION
 
 Default: ``None``
 
-The full Python path of the WSGI application object to use. If not set, an
-instance of :class:`~django.core.handlers.wsgi.WSGIHandler` will be used. The
-:djadmin:`django-admin.py startproject <startproject>` management command will
-create a simple ``wsgi.py`` file with an `application` object in it, and point
-this setting to that `application` object.
+The full Python path of the WSGI application object that Django's built-in
+servers (e.g. :djadmin:`runserver`) will use. The :djadmin:`django-admin.py
+startproject <startproject>` management command will create a simple
+``wsgi.py`` file with an `application` object in it, and point this setting to
+that `application` object.
+
+If not set, the return value of :func:`django.core.wsgi.get_wsgi_application`
+will be used.
 
 .. setting:: YEAR_MONTH_FORMAT
 
