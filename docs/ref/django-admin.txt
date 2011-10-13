@@ -897,7 +897,8 @@ startapp <appname>
 .. django-admin:: startapp
 
 Creates a Django app directory structure for the given app name in the current
-directory.
+directory. If a directory already exists for the given app name, the app
+directory structure will be written into it so long as there are no conflicts.
 
 startproject <projectname> [destination]
 --------------------------
