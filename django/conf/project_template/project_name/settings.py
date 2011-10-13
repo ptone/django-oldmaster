@@ -99,8 +99,8 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = '{{ project_name }}.urls'
 
-# The WSGI application used by Django's runserver etc.
-WSGI_APPLICATION = '{{ project_name }}.wsgi.application'
+# The WSGI application used by Django's runserver.
+WSGI_APPLICATION = 'wsgi.application'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

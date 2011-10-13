@@ -407,9 +407,9 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 
 USE_X_FORWARDED_HOST = False
 
-# The import name of the WSGI application. If this is `None` the default
-# 'django.core.handlers.wsgi.application' is used. Otherwise this shall
-# point to an actual WSGI application.
+# The Python dotted path to the WSGI application that `runserver` should
+# use. If this is `None` the default 'django.core.handlers.wsgi.application' is
+# used. Otherwise this should point to an actual WSGI application.
 WSGI_APPLICATION = None
 
 ##############

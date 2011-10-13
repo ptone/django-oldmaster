@@ -1,4 +1,5 @@
 from __future__ import with_statement
+
 import sys
 from threading import Lock
 try:
@@ -257,14 +258,20 @@ class WSGIHandler(base.BaseHandler):
         start_response(status, response_headers)
         return response
 
+
+# If no WSGI_APPLICATION is configured, this one will be used.
 application = WSGIHandler()
 
 
 class DjangoWSGIApplication(object):
     """
-    Implements a proxy to the actual WSGI application as configured
-    by the user in settings.WSGI_APPLICATION which will usually be the
-    `application`, optionally with middlewares applied.
+    Loads and proxies to the actual WSGI application as configured by the user
+    in settings.WSGI_APPLICATION.
+
+    By default this will be the ``application`` object in ``wsgi.py``, which by
+    default will be the `application` object above, possibly with middlewares
+    applied.
+
     """
     def __init__(self):
         self._instance = None
@@ -291,5 +298,8 @@ class DjangoWSGIApplication(object):
                     self._instance = self._load_application()
         return self._instance(environ, start_response)
 
-# the proxy used in deployment
+
+# The application object that proxies to whatever application the user has
+# configured in the ``WSGI_APPLICATION`` setting. This will be used by
+# ``runserver``.
 django_application = DjangoWSGIApplication()
