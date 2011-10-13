@@ -2,7 +2,7 @@
 How to use Django with Apache and mod_wsgi
 ==========================================
 
-Deploying Django with Apache_ and `mod_wsgi`_ is the recommended way to get
+Deploying Django with Apache_ and `mod_wsgi`_ is a tried and tested way to get
 Django into production.
 
 .. _Apache: http://httpd.apache.org/
@@ -16,8 +16,8 @@ The `official mod_wsgi documentation`_ is fantastic; it's your source for all
 the details about how to use mod_wsgi. You'll probably want to start with the
 `installation and configuration documentation`_.
 
-.. _official mod_wsgi documentation: http://code.google.com/p/modwsgi/
-.. _installation and configuration documentation: http://code.google.com/p/modwsgi/wiki/InstallationInstructions
+.. _official mod_wsgi documentation: http://www.modwsgi.org/
+.. _installation and configuration documentation: http://www.modwsgi.org/wiki/InstallationInstructions
 
 Basic configuration
 ===================
@@ -75,7 +75,7 @@ Using mod_wsgi daemon mode
 "Daemon mode" is the recommended mode for running mod_wsgi (on non-Windows
 platforms). See the `official mod_wsgi documentation`_ for details on setting
 up daemon mode. The only change required to the above configuration if you use
-daemon mode is that you can't use ``WsgiPythonPath``; instead you should use
+daemon mode is that you can't use ``WSGIPythonPath``; instead you should use
 the ``python-path`` option to ``WSGIDaemonProcess``, for example::
 
     WSGIDaemonProcess example.com python-path=/path/to/mysite.com:/path/to/venv/lib/python2.7/site-packages
@@ -160,8 +160,13 @@ Django distribution.
 We **strongly** recommend using :mod:`django.contrib.staticfiles` to handle
 the admin files, but here are two other approaches:
 
-    1. Create a symbolic link to the admin static files from within your
-       document root.
+1. Create a symbolic link to the admin static files from within your
+   document root (this may require ``+FollowSymLinks`` in your Apache
+   configuration).
 
-    2. Or, copy the admin static files so that they live within your Apache
-       document root.
+2. Use an ``Alias`` directive, as demonstrated above, to alias the appropriate
+   URL (probably :setting:`STATIC_URL` + `admin/`) to the actual location of
+   the admin files.
+
+2. Or, copy the admin static files so that they live within your Apache
+   document root.
