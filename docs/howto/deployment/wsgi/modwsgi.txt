@@ -1,5 +1,3 @@
-Demo python-path/WsgiPythonPath (daemon/embedded - need both cause daemon is preferred, but Windows doesn't support it), both for virtualenv handling and setting up path to project. Use http://paste.pocoo.org/show/491883/ to alleviate any security concerns.
-
 ==========================================
 How to use Django with Apache and mod_wsgi
 ==========================================
@@ -27,35 +25,60 @@ Basic configuration
 Once you've got mod_wsgi installed and activated, edit your ``httpd.conf``
 file and add::
 
-    WSGIScriptAlias / /path/to/mysite/wsgi.py
+    WSGIScriptAlias / /path/to/mysite.com/mysite/wsgi.py
+    WSGIPythonPath /path/to/mysite.com
 
-The first bit above is the url you want to be serving your application at
-(``/`` indicates the root url), and the second is the location of a "WSGI
-file" -- see below -- on your system, usually inside of your project. This
-tells Apache to serve any request below the given URL using the WSGI
-application defined by that file.
+    <Directory /path/to/mysite.com/mysite>
+    <Files wsgi.py>
+    Order deny,allow
+    Allow from all
+    </Files>
+    </Directory>
 
-Next we'll need to actually create this WSGI application, so create the file
-mentioned in the second part of ``WSGIScriptAlias`` and add::
+The first bit in the ``WSGIScriptAlias`` line is the base URL path you want to
+serve your application at (``/`` indicates the root url), and the second is the
+location of a "WSGI file" -- see below -- on your system, usually inside of
+your project package (``mysite`` in this example). This tells Apache to serve
+any request below the given URL using the WSGI application defined in that
+file.
 
-    import os
-    from django.core.management import setup_settings
+The ``WSGIPythonPath`` line ensures that your project package is available for
+import on the Python path; in other words, that ``import mysite`` works.
 
-    setup_settings(__name__)
+The ``<Directory>`` piece just ensures that Apache can access your
+:file:`wsgi.py` file.
 
-    # The application object is used by the development server
-    # as well as a WSGI server configured to use this file.
-    from django.core.handlers.wsgi import application
+Next we'll need to ensure this :file:`wsgi.py` with a WSGI application object
+exists. If you ran a recent version of :djadmin:`startproject`, it will have
+created one for you. Otherwise, you'll need to create it. See the
+:doc:`howto/deployment/wsgi/` documentation for the default contents you should
+put in this file, and what else you can add to it.
 
-If your project is not on your ``PYTHONPATH`` by default you can add::
+Using a virtualenv
+==================
 
-    path = '/path/to/mysite'
-    if path not in sys.path:
-        sys.path.append(path)
+If you install your project's Python dependencies inside a `virtualenv`_,
+you'll need to add the path to this virtualenv's ``site-packages`` directory to
+your Python path as well. To do this, you can add another line to your
+Apache configuration::
 
-just below the ``import sys`` line to place your project on the path.
-Remember to replace 'mysite.settings' with your correct settings file,
-and ``'/path/to/mysite'`` with your own project's location.
+    WSGIPythonPath /path/to/your/venv/lib/python2.X/site-packages
+
+Make sure you give the correct path to your virtualenv, and replace
+``python2.X`` with the correct Python version (e.g. ``python2.7``).
+
+.. _virtualenv: http://www.virtualenv.org
+
+Using mod_wsgi daemon mode
+==========================
+
+"Daemon mode" is the recommended mode for running mod_wsgi (on non-Windows
+platforms). See the `official mod_wsgi documentation`_ for details on setting
+up daemon mode. The only change required to the above configuration if you use
+daemon mode is that you can't use ``WsgiPythonPath``; instead you should use
+the ``python-path`` option to ``WSGIDaemonProcess``, for example::
+
+    WSGIDaemonProcess example.com python-path=/path/to/mysite.com:/path/to/venv/lib/python2.7/site-packages
 
 .. _serving-files:
 
@@ -83,29 +106,31 @@ This example sets up Django at the site root, but explicitly serves
 ``/static/`` and ``/media/`` URL space as a static file. All other URLs
 will be served using mod_wsgi::
 
-    Alias /robots.txt /usr/local/wsgi/static/robots.txt
-    Alias /favicon.ico /usr/local/wsgi/static/favicon.ico
+    Alias /robots.txt /path/to/mysite.com/static/robots.txt
+    Alias /favicon.ico /path/to/mysite.com/static/favicon.ico
 
-    AliasMatch ^/([^/]*\.css) /usr/local/wsgi/static/styles/$1
+    AliasMatch ^/([^/]*\.css) /path/to/mysite.com/static/styles/$1
 
-    Alias /media/ /usr/local/wsgi/media/
-    Alias /static/ /usr/local/wsgi/static/
+    Alias /media/ /path/to/mysite.com/media/
+    Alias /static/ /path/to/mysite.com/static/
 
-    <Directory /usr/local/wsgi/static>
+    <Directory /path/to/mysite.com/static>
     Order deny,allow
     Allow from all
     </Directory>
 
-    <Directory /usr/local/wsgi/media>
+    <Directory /path/to/mysite.com/media>
     Order deny,allow
     Allow from all
     </Directory>
 
-    WSGIScriptAlias / /usr/local/wsgi/scripts/django.wsgi
+    WSGIScriptAlias / /path/to/mysite.com/mysite/wsgi.py
 
-    <Directory /usr/local/wsgi/scripts>
+    <Directory /path/to/mysite.com/mysite>
+    <Files wsgi.py>
     Order allow,deny
     Allow from all
+    </Files>
     </Directory>
 
 .. _lighttpd: http://www.lighttpd.net/
@@ -124,10 +149,10 @@ will be served using mod_wsgi::
 Serving the admin files
 =======================
 
-Note that the Django development server automagically serves the static files
-of the admin app, but this is not the case when you use any other server
-arrangement. You're responsible for setting up Apache, or whichever media
-server you're using, to serve the admin files.
+Note that the Django development server automatically serves the static files
+of the admin app (and any other installed apps), but this is not the case when
+you use any other server arrangement. You're responsible for setting up Apache,
+or whichever media server you're using, to serve the admin files.
 
 The admin files live in (:file:`django/contrib/admin/static/admin`) of the
 Django distribution.
@@ -140,12 +165,3 @@ the admin files, but here are two other approaches:
 
     2. Or, copy the admin static files so that they live within your Apache
        document root.
-
-Details
-=======
-
-For more details, see the `mod_wsgi documentation on Django integration`_,
-which explains the above in more detail, and walks through all the various
-options you've got when deploying under mod_wsgi.
-
-.. _mod_wsgi documentation on Django integration: http://code.google.com/p/modwsgi/wiki/IntegrationWithDjango

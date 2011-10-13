@@ -128,7 +128,10 @@ Example command line for a Web server that understand the uWSGI protocol::
 This assumes that you have a top-level project package named ``mysite``, and
 within it a module :file:`mysite/wsgi.py` that contains a WSGI ``application``
 object. This is the layout you will have if you ran ``django-admin.py
-startproject mysite`` (using your own project name in place of ``mysite``).
+startproject mysite`` (using your own project name in place of ``mysite``) with
+a recent version of Django. If this file does not exist, you'll need to create
+it. See the :doc:`howto/deployment/wsgi/` documentation for the default
+contents you should put in this file, and what else you can add to it.
 
 The Django-specific options here are:
 
