@@ -49,12 +49,22 @@ def get_internal_wsgi_application():
     app_path = getattr(settings, 'WSGI_APPLICATION')
     if app_path is None:
         return get_wsgi_application()
+    module_name, attr = app_path.rsplit('.', 1)
     try:
-        module_name, attr = app_path.rsplit('.', 1)
-        return getattr(import_module(module_name), attr)
-    except (ImportError, AttributeError), e:
-        raise ImproperlyConfigured("WSGI application '%s' could not "
-                                   "be loaded: %s" % (app_path, e))
+        mod = import_module(module_name)
+    except ImportError, e:
+        raise ImproperlyConfigured(
+            "WSGI application '%s' could not be loaded; "
+            "could not import module '%s': %s" % (app_path, module_name, e))
+    try:
+        app = getattr(mod, attr)
+    except AttributeError, e:
+        raise ImproperlyConfigured(
+            "WSGI application '%s' could not be loaded; "
+            "can't find '%s' in module '%s': %s"
+            % (app_path, attr, module_name, e))
+
+    return app
 
 
 class WSGIServerException(Exception):
