@@ -15,6 +15,7 @@ documentation for the following WSGI servers:
    :maxdepth: 1
 
    modwsgi
+   gunicorn
    uwsgi
 
 The ``application`` object
