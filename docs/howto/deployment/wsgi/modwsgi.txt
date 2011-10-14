@@ -22,8 +22,8 @@ the details about how to use mod_wsgi. You'll probably want to start with the
 Basic configuration
 ===================
 
-Once you've got mod_wsgi installed and activated, edit your ``httpd.conf``
-file and add::
+Once you've got mod_wsgi installed and activated, edit your Apache server's
+``httpd.conf`` file and add::
 
     WSGIScriptAlias / /path/to/mysite.com/mysite/wsgi.py
     WSGIPythonPath /path/to/mysite.com
@@ -49,10 +49,10 @@ The ``<Directory>`` piece just ensures that Apache can access your
 :file:`wsgi.py` file.
 
 Next we'll need to ensure this :file:`wsgi.py` with a WSGI application object
-exists. If you ran a recent version of :djadmin:`startproject`, it will have
-created one for you. Otherwise, you'll need to create it. See the
-:doc:`howto/deployment/wsgi/` documentation for the default contents you should
-put in this file, and what else you can add to it.
+exists. As of Django version 1.4, :djadmin:`startproject`, will have
+created one for you; otherwise, you'll need to create it. See the :doc:`WSGI
+overview documentation</howto/deployment/wsgi/index>` for the default contents
+you should put in this file, and what else you can add to it.
 
 Using a virtualenv
 ==================
@@ -157,8 +157,9 @@ or whichever media server you're using, to serve the admin files.
 The admin files live in (:file:`django/contrib/admin/static/admin`) of the
 Django distribution.
 
-We **strongly** recommend using :mod:`django.contrib.staticfiles` to handle
-the admin files, but here are two other approaches:
+We **strongly** recommend using :mod:`django.contrib.staticfiles` (along with
+a Web server as outlined in the previous section) to handle the admin files, but
+here are three other approaches:
 
 1. Create a symbolic link to the admin static files from within your
    document root (this may require ``+FollowSymLinks`` in your Apache
@@ -168,5 +169,5 @@ the admin files, but here are two other approaches:
    URL (probably :setting:`STATIC_URL` + `admin/`) to the actual location of
    the admin files.
 
-2. Or, copy the admin static files so that they live within your Apache
+3. Copy the admin static files so that they live within your Apache
    document root.

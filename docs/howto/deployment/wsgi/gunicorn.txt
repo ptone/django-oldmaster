@@ -1,0 +1,76 @@
+===============================
+How to use Django with Gunicorn
+===============================
+
+.. highlight:: bash
+
+Gunicorn_ 'Green Unicorn' is a Python WSGI HTTP Server for UNIX. It's a pre-fork
+worker model ported from Ruby's Unicorn project.
+
+.. _Gunicorn: http://gunicorn.org/
+
+There are two ways to use Gunicorn with Django. One is to have Gunicorn treat
+Django as just another WSGI application. The second is to use Gunicorn's
+special `integration with Django`.
+
+.. _integration with Django: http://gunicorn.org/run.html#django-manage-py_
+
+Running Django in Gunicorn as a generic WSGI application
+========================================================
+
+When Gunicorn is installed, a ``gunicorn`` command is available which starts the
+Gunicorn server process. At its simplest, gunicorn just needs to be called with a the location of a WSGI
+application object.::
+
+    gunicorn [OPTIONS] APP_MODULE
+
+Where ``APP_MODULE`` is of the pattern ``$(MODULE_NAME):$(VARIABLE_NAME)``. The
+module name can be a full dotted path. The variable name refers to a WSGI
+callable that should be found in the specified module.
+
+So for a typical Django project, invoking gunicorn would look like:::
+
+    cd /path/to/myprojectdir
+    gunicorn myproject.wsgi:application
+
+Where ``/path/to/myprojectdir`` is the directory that contains the generated
+manage.py file and the myproject site package - by default both directories
+will have the same name.
+
+If you install Gunicorn inside a `virtualenv`_ a virtualenv specific
+version of the ``gunicorn`` command is installed in your virtualenv bin path.
+
+If you want to run such a virtualenv enabled project, you would use something
+like:::
+
+    cd /path/to/myprojectdir
+    # note that your virtualenv need not be activated at this point
+    ./path/to/virtualenv/bin/gunicorn myproject.wsgi:application
+
+.. _virtualenv: http://www.virtualenv.org
+
+Using Gunicorn's Django integration
+===================================
+
+Gunicon provides two ways to take advantage of its Django integration. You can
+either use the Django specific version of the ``gunicorn`` command:
+``gunicorn_django``, which must be run from the same directory that contains
+your settings.py file.
+
+Or you can install gunicorn as an installed app, and use the ``run_gunicorn``
+management command in place of ``runserver``
+
+These provide a few Django specific niceties:
+
+    * sets the gunicorn process name to be that of the project
+
+    * validates installed models
+
+    * allows a ``--adminmedia`` option for passing in the location of the
+      admin media files, mimicing the behavior of runserver.
+
+See Gunicorn's `deployment documentation`_ for additional tips on starting and
+maintaining the Gunicorn server.
+
+.. _deployment documentation: http://gunicorn.org/deploy.html
+
