@@ -40,22 +40,18 @@ ensure that is to run this command from the same directory as your
 Using Gunicorn's Django integration
 ===================================
 
-Gunicorn provides two ways to take advantage of its Django integration. You can
-either use the Django specific version of the ``gunicorn`` command,
-``gunicorn_django``, which must be run from the same directory that contains
-your settings.py file.
+Gunicorn also provides Django integration. You can add ``"gunicorn"`` to
+:setting:`INSTALLED_APPS`, and use the ``run_gunicorn`` management command in
+place of :djadmin:`runserver`.
 
-Or you can add ``"gunicorn"`` to :setting:`INSTALLED_APPS`, and use the
-``run_gunicorn`` management command in place of :djadmin:`runserver`.
+This provides a few Django-specific niceties:
 
-These provide a few Django specific niceties:
+* sets the gunicorn process name to be that of the project
 
-    * sets the gunicorn process name to be that of the project
+* validates installed models
 
-    * validates installed models
-
-    * allows an ``--adminmedia`` option for passing in the location of the
-      admin media files, mimicing the behavior of runserver.
+* allows an ``--adminmedia`` option for passing in the location of the
+  admin media files, mimicing the behavior of runserver.
 
 See Gunicorn's `deployment documentation`_ for additional tips on starting and
 maintaining the Gunicorn server.
