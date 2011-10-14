@@ -395,6 +395,24 @@ prefix, some places without it), the imports will need to be cleaned up when
 switching to the new ``manage.py``.
 
 
+Improved WSGI support
+~~~~~~~~~~~~~~~~~~~~~
+
+The :djadmin:`startproject` management command now adds a :file:`wsgi.py`
+module to the initial project layout, containing a simple WSGI application
+object that can be used for :doc:`deploying with WSGI app
+servers<howto/deployment/wsgi>`.
+
+The :djadmin:`built-in development server<runserver>` now supports using an
+externally-defined WSGI application object, so as to make it possible to run
+runserver with the same WSGI configuration that is used for deployment. A new
+:setting:`WSGI_APPLICATION` setting is available to configure which WSGI
+application object :djadmin:`runserver` uses.
+
+(The :djadmin:`runfcgi` management command also internally wraps the WSGI
+application object configured via :setting:`WSGI_APPLICATION`.)
+
+
 Minor features
 ~~~~~~~~~~~~~~
 
