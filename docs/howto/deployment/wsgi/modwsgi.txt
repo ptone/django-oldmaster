@@ -158,7 +158,7 @@ The admin files live in (:file:`django/contrib/admin/static/admin`) of the
 Django distribution.
 
 We **strongly** recommend using :mod:`django.contrib.staticfiles` to handle
-the admin files, but here are two other approaches:
+the admin files, but here are three other approaches:
 
 1. Create a symbolic link to the admin static files from within your
    document root (this may require ``+FollowSymLinks`` in your Apache
@@ -168,5 +168,5 @@ the admin files, but here are two other approaches:
    URL (probably :setting:`STATIC_URL` + `admin/`) to the actual location of
    the admin files.
 
-2. Or, copy the admin static files so that they live within your Apache
+3. Copy the admin static files so that they live within your Apache
    document root.
