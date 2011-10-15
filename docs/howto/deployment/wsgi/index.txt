@@ -2,9 +2,10 @@
 How to deploy with WSGI
 =======================
 
-Django's preferred platform of deployment is WSGI -- the "Web Server Gateway
-Interface" standard as defined in :pep:`333` for web servers and application
-servers that communicate with web applications.
+Django's primary deployment platform is WSGI_, the Python standard for web
+servers and applications.
+
+.. _WSGI: http://www.wsgi.org
 
 Django's :djadmin:`startproject` management command sets up a simple default
 WSGI configuration for you, which you can tweak as needed for your project, and
@@ -26,8 +27,22 @@ object which the webserver uses to communicate with your code. This is commonly
 specified as an object named ``application`` in a Python module accessible to
 the server.
 
+.. versionchanged:: 1.4
+
 The :djadmin:`startproject` command creates a :file:`projectname/wsgi.py` that
-contains such an application object. Initially this file contains::
+contains such an application object.
+
+.. note::
+
+   Upgrading from a previous release of Django and don't have a :file:`wsgi.py`
+   file in your project? You can simply add one to your project's top-level
+   Python package (probably next to :file:`settings.py` and :file:`urls.py`)
+   with the contents below. If you want :djadmin:`runserver` to also make use
+   of this WSGI file, you can also add ``WSGI_APPLICATION =
+   "mysite.wsgi.application"`` in your settings (replacing ``mysite`` with the
+   name of your project).
+
+Initially this file contains::
 
     import os
 

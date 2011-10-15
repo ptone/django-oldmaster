@@ -409,8 +409,9 @@ USE_X_FORWARDED_HOST = False
 
 # The Python dotted path to the WSGI application that Django's internal servers
 # (runserver, runfcgi) will use. If `None`, the return value of
-# 'django.core.wsgi.get_wsgi_application' is used. Otherwise this should point
-# to an actual WSGI application object.
+# 'django.core.wsgi.get_wsgi_application' is used, thus preserving the same
+# behavior as previous versions of Django. Otherwise this should point to an
+# actual WSGI application object.
 WSGI_APPLICATION = None
 
 ##############

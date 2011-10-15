@@ -4,8 +4,8 @@ How to use Django with Gunicorn
 
 .. highlight:: bash
 
-Gunicorn_ ('Green Unicorn') is a Python WSGI HTTP Server for UNIX. It's a
-pre-fork worker model ported from Ruby's Unicorn project.
+Gunicorn_ ('Green Unicorn') is a pure-Python WSGI server for UNIX. It has no
+dependencies and is easy to install and use.
 
 .. _Gunicorn: http://gunicorn.org/
 
@@ -14,6 +14,14 @@ Django as just another WSGI application. The second is to use Gunicorn's
 special `integration with Django`_.
 
 .. _integration with Django: http://gunicorn.org/run.html#django-manage-py_
+
+Installing Gunicorn
+===================
+
+Installing gunicorn is as easy as ``pip install gunicorn``. For more details,
+see the `gunicorn documentation`_.
+
+.. _gunicorn documentation: http://gunicorn.org/install.html
 
 Running Django in Gunicorn as a generic WSGI application
 ========================================================
@@ -40,9 +48,8 @@ ensure that is to run this command from the same directory as your
 Using Gunicorn's Django integration
 ===================================
 
-Gunicorn also provides Django integration. You can add ``"gunicorn"`` to
-:setting:`INSTALLED_APPS`, and use the ``run_gunicorn`` management command in
-place of :djadmin:`runserver`.
+To use Gunicorn's built-in Django integration, first add ``"gunicorn"`` to
+:setting:`INSTALLED_APPS`. Then run ``python manage.py run_gunicorn``.
 
 This provides a few Django-specific niceties:
 

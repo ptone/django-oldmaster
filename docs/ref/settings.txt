@@ -2111,7 +2111,8 @@ startproject <startproject>` management command will create a simple
 that `application` object.
 
 If not set, the return value of :func:`django.core.wsgi.get_wsgi_application`
-will be used.
+will be used. In this case, the behavior of :djadmin:`runserver` will be
+identical to previous Django versions.
 
 .. setting:: YEAR_MONTH_FORMAT
 
