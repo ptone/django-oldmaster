@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import datetime
 import pickle
 import sys
@@ -11,11 +13,12 @@ from django.test import TestCase, skipUnlessDBFeature
 from django.utils import unittest
 from django.utils.datastructures import SortedDict
 
-from models import (Annotation, Article, Author, Celebrity, Child, Cover, Detail,
-    DumbCategory, ExtraInfo, Fan, Item, LeafA, LoopX, LoopZ, ManagedModel,
-    Member, NamedCategory, Note, Number, Plaything, PointerA, Ranking, Related,
-    Report, ReservedName, Tag, TvChef, Valid, X, Food, Eaten, Node, ObjectA, ObjectB,
-    ObjectC, CategoryItem, SimpleCategory, SpecialCategory, OneToOneCategory)
+from .models import (Annotation, Article, Author, Celebrity, Child, Cover,
+    Detail, DumbCategory, ExtraInfo, Fan, Item, LeafA, LoopX, LoopZ,
+    ManagedModel, Member, NamedCategory, Note, Number, Plaything, PointerA,
+    Ranking, Related, Report, ReservedName, Tag, TvChef, Valid, X, Food, Eaten,
+    Node, ObjectA, ObjectB, ObjectC, CategoryItem, SimpleCategory,
+    SpecialCategory, OneToOneCategory)
 
 
 class BaseQuerysetTest(TestCase):
@@ -1865,3 +1868,12 @@ class UnionTests(unittest.TestCase):
         Q1 = Q(objecta__name='one', objectc__objecta__name='two')
         Q2 = Q(objecta__objectc__name='ein', objectc__objecta__name='three', objecta__objectb__name='trois')
         self.check_union(ObjectB, Q1, Q2)
+
+
+class DefaultValuesInsertTest(TestCase):
+    def test_no_extra_params(self):
+        # Ticket #17056 -- affects Oracle
+        try:
+            DumbCategory.objects.create()
+        except TypeError:
+            self.fail("Creation of an instance of a model with only the PK field shouldn't error out after bulk insert refactoring (#17056)")
