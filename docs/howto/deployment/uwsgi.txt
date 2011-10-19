@@ -34,7 +34,7 @@ See uwsgi's `background documentation`_ for more detail.
 .. _background documentation: http://projects.unbit.it/uwsgi/wiki/Background
 
 Configuring and starting the uWSGI server for Django
----------------------------------------
+----------------------------------------------------
 
 uwsgi supports multiple ways to configure the process, see uwsgi's
 `configuration documentation`_ and `examples`_
