@@ -243,7 +243,6 @@ class DjangoTestSuiteRunner(object):
                     suite.addTest(build_suite(app))
         else:
             for app in get_apps():
-                print app.__name__.split('.')[-2]
                 suite.addTest(build_suite(app))
 
         if extra_tests:
