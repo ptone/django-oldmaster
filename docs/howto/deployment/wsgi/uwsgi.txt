@@ -28,7 +28,7 @@ uWSGI model
 -----------
 
 uWSGI operates on a client-server model. Your Web server (ie. nginx, Apache)
-communicates with a django-uwsgi "worker" process to serve dynamic contents.
+communicates with a django-uwsgi "worker" process to serve dynamic content.
 See uwsgi's `background documentation`_ for more detail.
 
 .. _background documentation: http://projects.unbit.it/uwsgi/wiki/Background
@@ -45,8 +45,8 @@ uwsgi supports multiple ways to configure the process, see uwsgi's
 An example command to start a uwsgi server::
 
     uwsgi --chdir=/path/to/your/project
-        --module='django.core.handlers.wsgi:WSGIHandler()' \
-        --env DJANGO_SETTINGS_MODULE=settings \
+        --module='mysite.wsgi:application' \
+        --env DJANGO_SETTINGS_MODULE=mysite.settings \
         --master --pidfile=/tmp/project-master.pid \
         --socket=127.0.0.1:49152 \      # can also be a file
         --processes=5 \                 # number of worker processes
@@ -58,18 +58,27 @@ An example command to start a uwsgi server::
         --home=/path/to/virtual/env \   # optionnal path to a virtualenv
         --daemonize=/var/log/uwsgi/yourproject.log      # background the process
 
-The Django relevant options are:
+This assumes that you have a top-level project package named ``mysite``, and
+within it a module :file:`mysite/wsgi.py` that contains a WSGI ``application``
+object. This is the layout you will have if you ran ``django-admin.py
+startproject mysite`` (using your own project name in place of ``mysite``) with
+a recent version of Django. If this file does not exist, you'll need to create
+it. See the :doc:`/howto/deployment/wsgi/index` documentation for the default
+contents you should put in this file, and what else you can add to it.
 
-* ``chdir``: should be the path to your project
-* ``module``: uwsgi module to use
-* ``pythonpath``: optional path to your project virtualenv
-* ``env``: should contain at least ``DJANGO_SETTINGS_MODULE``
+The Django-specific options here are:
+
+* ``chdir``: the path to the directory that needs to be on Python's import path; i.e. the directory containing the ``mysite`` package.
+* ``module``: The WSGI module to use, probably the ``mysite.wsgi`` module which
+  :djadmin:`startproject` creates.
+* ``env``: should probably contain at least ``DJANGO_SETTINGS_MODULE``
+* ``home``: optional path to your project virtualenv
 
 Example ini configuration file::
 
     [uwsgi]
     chdir=/path/to/your/project
-    module='django.core.handlers.wsgi:WSGIHandler()'
+    module='mysite.wsgi:application'
     master=True
     pidfile=/tmp/project-master.pid
     vacuum=True
