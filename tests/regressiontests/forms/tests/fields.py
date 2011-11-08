@@ -49,23 +49,27 @@ def fix_os_paths(x):
 
 
 def verify_exists_urls(existing_urls=()):
+    """
+    Patches urllib to simulate the availability of some urls even when there
+    is no Internet connection. This hack should be removed alongside with
+    `URLField.verify_exists` in Django 1.5.
+    """
     def decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
             from django.core import validators
-            # patch urllib2
-            original_urlopen = validators.urllib2.urlopen
-            def urlopen(req):
-                url = req.get_full_url()
-                if url in existing_urls:
+            # patch urllib2.OpenerDirector
+            original_open = validators.urllib2.OpenerDirector.open
+            def custom_open(self, req, data=None, timeout=None):
+                if req.get_full_url() in existing_urls:
                     return True
                 raise Exception()
             try:
-                urllib2.urlopen = urlopen
+                urllib2.OpenerDirector.open = custom_open
                 func(*args, **kwargs)
             finally:
-                # unpatch urllib2
-                validators.urllib2.urlopen = original_urlopen
+                # unpatch urllib2.OpenerDirector
+                validators.urllib2.OpenerDirector.open = original_open
         return wrapper
     return decorator
 
@@ -489,6 +493,12 @@ class FieldsTests(SimpleTestCase):
         self.assertRaisesMessage(ValidationError, "[u'Ensure this value has at most 10 characters (it has 11).']", f.clean, '12345678901')
         self.assertRaisesMessage(ValidationError, "[u'Enter a valid value.']", f.clean, '12345a')
 
+    def test_change_regex_after_init(self):
+        f = RegexField('^[a-z]+$')
+        f.regex = '^\d+$'
+        self.assertEqual(u'1234', f.clean('1234'))
+        self.assertRaisesMessage(ValidationError, "[u'Enter a valid value.']", f.clean, 'abcd')
+
     # EmailField ##################################################################
 
     def test_emailfield_1(self):
@@ -690,8 +700,9 @@ class FieldsTests(SimpleTestCase):
         except ValidationError, e:
             self.assertEqual("[u'This URL appears to be a broken link.']", str(e))
 
+    @verify_exists_urls((u'http://xn--hxargifdar.idn.icann.org/%CE%91%CF%81%CF%87%CE%B9%CE%BA%CE%AE_%CF%83%CE%B5%CE%BB%CE%AF%CE%B4%CE%B1',))
     def test_urlfield_10(self):
-        # UTF-8 in the domain. 
+        # UTF-8 in the domain.
         f = URLField(verify_exists=True)
         url = u'http://\u03b5\u03bb\u03bb\u03b7\u03bd\u03b9\u03ba\u03ac.idn.icann.org/\u0391\u03c1\u03c7\u03b9\u03ba\u03ae_\u03c3\u03b5\u03bb\u03af\u03b4\u03b1'
         self.assertEqual(url, f.clean(url))
