@@ -39,7 +39,7 @@ Configuring and starting the uWSGI server for Django
 uwsgi supports multiple ways to configure the process, see uwsgi's
 `configuration documentation`_ and `examples`_
 
-.. _cofiguration documentation: http://projects.unbit.it/uwsgi/wiki/Doc 
+.. _configuration documentation: http://projects.unbit.it/uwsgi/wiki/Doc 
 .. _examples: http://projects.unbit.it/uwsgi/wiki/Example
 
 An example command to start a uwsgi server::
