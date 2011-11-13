@@ -3,10 +3,10 @@ from django.core.exceptions import ImproperlyConfigured
 from django.http import Http404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
-from django.views.generic.base import TemplateResponseMixin, View
+from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
 
-class MultipleObjectMixin(object):
+class MultipleObjectMixin(ContextMixin):
     allow_empty = True
     queryset = None
     model = None
@@ -90,20 +90,21 @@ class MultipleObjectMixin(object):
         context_object_name = self.get_context_object_name(queryset)
         if page_size:
             paginator, page, queryset, is_paginated = self.paginate_queryset(queryset, page_size)
-            context = {
+            paginator_context = {
                 'paginator': paginator,
                 'page_obj': page,
                 'is_paginated': is_paginated,
                 'object_list': queryset
             }
         else:
-            context = {
+            paginator_context = {
                 'paginator': None,
                 'page_obj': None,
                 'is_paginated': False,
                 'object_list': queryset
             }
-        context.update(kwargs)
+        context = super(MultipleObjectMixin, self).get_context_data(**kwargs)
+        context.update(paginator_context)
         if context_object_name is not None:
             context[context_object_name] = queryset
         return context

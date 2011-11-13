@@ -8,6 +8,28 @@ from django.utils.decorators import classonlymethod
 logger = getLogger('django.request')
 
 
+class BaseContextMixin(object):
+    """
+    A base mixin that requires no arguments to get_context_data and returns an
+    empty dictionary, so that super() will work properly in all cases.
+    """
+
+    def get_context_data(self):
+            return {}
+
+
+class ContextMixin(BaseContextMixin):
+    """
+    A default context mixin that adds the keyword arguments received by
+    get_context_data to the template context.
+    """
+
+    def get_context_data(self, **kwargs):
+        context = super(ContextMixin, self).get_context_data()
+        context.update(kwargs)
+        return context
+
+
 class View(object):
     """
     Intentionally simple parent class for all views. Only implements
@@ -111,14 +133,16 @@ class TemplateResponseMixin(object):
             return [self.template_name]
 
 
-class TemplateView(TemplateResponseMixin, View):
+class TemplateView(TemplateResponseMixin, BaseContextMixin, View):
     """
-    A view that renders a template.
+    A view that renders a template.  This view is different from all the others
+    insofar as it passes ``kwargs`` as ``params`` to the template context, so
+    inherit from ``BaseContextMixin`` instead of ``ContextMixin``.
     """
     def get_context_data(self, **kwargs):
-        return {
-            'params': kwargs
-        }
+        context = super(TemplateView, self).get_context_data()
+        context.update({'params': kwargs})
+        return context
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)

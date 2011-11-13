@@ -2,10 +2,10 @@ from django.core.exceptions import ImproperlyConfigured, ObjectDoesNotExist
 from django.http import Http404
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext as _
-from django.views.generic.base import TemplateResponseMixin, View
+from django.views.generic.base import TemplateResponseMixin, ContextMixin, View
 
 
-class SingleObjectMixin(object):
+class SingleObjectMixin(ContextMixin):
     """
     Provides the ability to retrieve a single object for further manipulation.
     """
@@ -86,7 +86,7 @@ class SingleObjectMixin(object):
             return None
 
     def get_context_data(self, **kwargs):
-        context = kwargs
+        context = super(SingleObjectMixin, self).get_context_data(**kwargs)
         context_object_name = self.get_context_object_name(self.object)
         if context_object_name:
             context[context_object_name] = self.object
