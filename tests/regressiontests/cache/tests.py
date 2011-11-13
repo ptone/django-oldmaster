@@ -243,6 +243,7 @@ class BaseCacheTests(object):
         self.assertEqual(self.cache.incr('answer', 10), 52)
         self.assertEqual(self.cache.get('answer'), 52)
         self.assertRaises(ValueError, self.cache.incr, 'does_not_exist')
+        self.assertEqual(self.cache.incr('answer', -10), 42)
 
     def test_decr(self):
         # Cache values can be decremented
@@ -252,6 +253,7 @@ class BaseCacheTests(object):
         self.assertEqual(self.cache.decr('answer', 10), 32)
         self.assertEqual(self.cache.get('answer'), 32)
         self.assertRaises(ValueError, self.cache.decr, 'does_not_exist')
+        self.assertEqual(self.cache.decr('answer', -10), 42)
 
     def test_data_types(self):
         # Many different data types can be cached
