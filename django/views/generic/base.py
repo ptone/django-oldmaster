@@ -8,26 +8,14 @@ from django.utils.decorators import classonlymethod
 logger = getLogger('django.request')
 
 
-class BaseContextMixin(object):
+class ContextMixin(object):
     """
-    A base mixin that requires no arguments to get_context_data and returns an
-    empty dictionary, so that super() will work properly in all cases.
-    """
-
-    def get_context_data(self):
-            return {}
-
-
-class ContextMixin(BaseContextMixin):
-    """
-    A default context mixin that adds the keyword arguments received by
-    get_context_data to the template context.
+    A default context mixin that passes the keyword arguments received by
+    get_context_data as the template context.
     """
 
     def get_context_data(self, **kwargs):
-        context = super(ContextMixin, self).get_context_data()
-        context.update(kwargs)
-        return context
+        return kwargs
 
 
 class View(object):
@@ -133,16 +121,18 @@ class TemplateResponseMixin(object):
             return [self.template_name]
 
 
-class TemplateView(TemplateResponseMixin, BaseContextMixin, View):
+class TemplateView(TemplateResponseMixin, ContextMixin, View):
     """
     A view that renders a template.  This view is different from all the others
     insofar as it passes ``kwargs`` as ``params`` to the template context, so
     inherit from ``BaseContextMixin`` instead of ``ContextMixin``.
     """
     def get_context_data(self, **kwargs):
-        context = super(TemplateView, self).get_context_data()
-        context.update({'params': kwargs})
-        return context
+        # support the deprecated 'params' template variable for now, but also
+        # pass kwargs up the tree as-is
+        context = {'params': kwargs}
+        context.update(kwargs)
+        return super(TemplateView, self).get_context_data(**context)
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(**kwargs)

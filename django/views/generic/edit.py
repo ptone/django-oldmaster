@@ -110,13 +110,14 @@ class ModelFormMixin(FormMixin, SingleObjectMixin):
         return super(ModelFormMixin, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
-        context = super(ModelFormMixin, self).get_context_data(**kwargs)
+        context = {}
         if self.object:
             context['object'] = self.object
             context_object_name = self.get_context_object_name(self.object)
             if context_object_name:
                 context[context_object_name] = self.object
-        return context
+        context.update(kwargs)
+        return super(ModelFormMixin, self).get_context_data(**context)
 
 
 class ProcessFormView(View):
