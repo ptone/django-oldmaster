@@ -124,8 +124,8 @@ class TemplateResponseMixin(object):
 class TemplateView(TemplateResponseMixin, ContextMixin, View):
     """
     A view that renders a template.  This view is different from all the others
-    insofar as it passes ``kwargs`` as ``params`` to the template context, so
-    inherit from ``BaseContextMixin`` instead of ``ContextMixin``.
+    insofar as it also passes ``kwargs`` as ``params`` to the template context
+    (this functionality has been deprecated).
     """
     def get_context_data(self, **kwargs):
         # support the deprecated 'params' template variable for now, but also
