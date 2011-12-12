@@ -128,10 +128,7 @@ class TemplateView(TemplateResponseMixin, ContextMixin, View):
     (this functionality has been deprecated).
     """
     def get_context_data(self, **kwargs):
-        # support the deprecated 'params' template variable for now, but also
-        # pass kwargs up the tree as-is
         context = {'params': kwargs}
-        context.update(kwargs)
         return super(TemplateView, self).get_context_data(**context)
 
     def get(self, request, *args, **kwargs):
