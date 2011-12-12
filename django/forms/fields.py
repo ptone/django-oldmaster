@@ -17,7 +17,7 @@ except ImportError:
 
 from django.core import validators
 from django.core.exceptions import ValidationError
-from django.forms.util import ErrorList
+from django.forms.util import ErrorList, from_current_timezone, to_current_timezone
 from django.forms.widgets import (TextInput, PasswordInput, HiddenInput,
     MultipleHiddenInput, ClearableFileInput, CheckboxInput, Select,
     NullBooleanSelect, SelectMultiple, DateInput, DateTimeInput, TimeInput,
@@ -197,9 +197,11 @@ class CharField(Field):
         return smart_unicode(value)
 
     def widget_attrs(self, widget):
+        attrs = super(CharField, self).widget_attrs(widget)
         if self.max_length is not None and isinstance(widget, (TextInput, PasswordInput)):
             # The HTML attribute is maxlength, not max_length.
-            return {'maxlength': str(self.max_length)}
+            attrs.update({'maxlength': str(self.max_length)})
+        return attrs
 
 class IntegerField(Field):
     default_error_messages = {
@@ -407,6 +409,11 @@ class DateTimeField(BaseTemporalField):
         'invalid': _(u'Enter a valid date/time.'),
     }
 
+    def prepare_value(self, value):
+        if isinstance(value, datetime.datetime):
+            value = to_current_timezone(value)
+        return value
+
     def to_python(self, value):
         """
         Validates that the input can be converted to a datetime. Returns a
@@ -415,9 +422,10 @@ class DateTimeField(BaseTemporalField):
         if value in validators.EMPTY_VALUES:
             return None
         if isinstance(value, datetime.datetime):
-            return value
+            return from_current_timezone(value)
         if isinstance(value, datetime.date):
-            return datetime.datetime(value.year, value.month, value.day)
+            result = datetime.datetime(value.year, value.month, value.day)
+            return from_current_timezone(result)
         if isinstance(value, list):
             # Input comes from a SplitDateTimeWidget, for example. So, it's two
             # components: date and time.
@@ -426,7 +434,8 @@ class DateTimeField(BaseTemporalField):
             if value[0] in validators.EMPTY_VALUES and value[1] in validators.EMPTY_VALUES:
                 return None
             value = '%s %s' % tuple(value)
-        return super(DateTimeField, self).to_python(value)
+        result = super(DateTimeField, self).to_python(value)
+        return from_current_timezone(result)
 
     def strptime(self, value, format):
         return datetime.datetime.strptime(value, format)
@@ -977,7 +986,8 @@ class SplitDateTimeField(MultiValueField):
                 raise ValidationError(self.error_messages['invalid_date'])
             if data_list[1] in validators.EMPTY_VALUES:
                 raise ValidationError(self.error_messages['invalid_time'])
-            return datetime.datetime.combine(*data_list)
+            result = datetime.datetime.combine(*data_list)
+            return from_current_timezone(result)
         return None
 
 
