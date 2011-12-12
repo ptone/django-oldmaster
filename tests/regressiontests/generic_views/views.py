@@ -184,3 +184,12 @@ class BookDetailGetObjectCustomQueryset(BookDetail):
     def get_object(self, queryset=None):
         return super(BookDetailGetObjectCustomQueryset,self).get_object(
             queryset=Book.objects.filter(pk=2))
+
+class CustomContextView(generic.SingleObjectTemplateResponseMixin, 
+        generic.ModelFormMixin):
+    def get_context_data(self, **kwargs):
+        context = {'cutomkey':'customvalue'}
+        context.update(kwargs)
+        return super(CustomContextView, self).get_context_data(**context)
+
+
