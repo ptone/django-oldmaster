@@ -219,12 +219,9 @@ class BaseDateListView(MultipleObjectMixin, DateMixin, View):
 
     def get_context_data(self, **kwargs):
         """
-        Get the context. Must return a Context (or subclass) instance.
+        Get the context.
         """
-        items = kwargs.pop('object_list')
-        context = super(BaseDateListView, self).get_context_data(object_list=items)
-        context.update(kwargs)
-        return context
+        return super(BaseDateListView, self).get_context_data(**kwargs)
 
 
 class BaseArchiveIndexView(BaseDateListView):
