@@ -6,6 +6,7 @@ from django.test import TestCase, RequestFactory
 from django.utils import unittest
 from django.views.generic import View, TemplateView, RedirectView
 
+from . import views
 
 class SimpleView(View):
     """
@@ -311,3 +312,18 @@ class RedirectViewTest(unittest.TestCase):
         # we can't use self.rf.get because it always sets QUERY_STRING
         response = RedirectView.as_view(url='/bar/')(self.rf.request(PATH_INFO='/foo/'))
         self.assertEqual(response.status_code, 301)
+
+class GetContextDataTest(unittest.TestCase):
+
+    def test_get_context_data_super(self):
+        test_view = views.CustomContextView()
+        context = test_view.get_context_data(kwarg_test='kwarg_value')
+        # the test_name key is inserted by the test classes parent
+        self.assertTrue('test_name' in context)
+        self.assertEqual(context['kwarg_test'], 'kwarg_value')
+        self.assertEqual(context['custom_key'], 'custom_value')
+        # test that kwarg overrides values assigned higher up
+        context = test_view.get_context_data(test_name='test_value')
+        self.assertEqual(context['test_name'], 'test_value')
+
+
