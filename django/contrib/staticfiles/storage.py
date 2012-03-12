@@ -95,7 +95,7 @@ class CachedFilesMixin(object):
         return urlunsplit(unparsed_name)
 
     def cache_key(self, name):
-        return u'staticfiles:cache:%s' % hashlib.md5(name).hexdigest()
+        return u'staticfiles:cache:%s' % hashlib.md5(smart_str(name)).hexdigest()
 
     def url(self, name, force=False):
         """
