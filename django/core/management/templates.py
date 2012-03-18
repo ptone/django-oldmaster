@@ -89,7 +89,10 @@ class TemplateCommand(BaseCommand):
                     message = e
                 raise CommandError(message)
         else:
-            top_dir = path.expanduser(target)
+            top_dir = os.path.abspath(path.expanduser(target))
+            if not os.path.exists(top_dir):
+                raise CommandError("Target directory must already exist, "
+                        "please create it first")
 
 
         extensions = tuple(
