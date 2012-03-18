@@ -1534,3 +1534,20 @@ class StartProject(LiveServerTestCase, AdminScriptTestCase):
             with open(os.path.join(base_path, f)) as fh:
                 self.assertEqual(fh.read(),
                     '# some file for customtestproject test project')
+
+    def test_custom_project_template_context_variables(self):
+        "Make sure template context variables are rendered with proper values"
+        template_path = os.path.join(test_dir, 'admin_scripts', 'custom_templates', 'project_template')
+        args = ['startproject', '--template', template_path, 'a_project', 'project_dir']
+        testproject_dir = os.path.join(test_dir, 'project_dir')
+        os.mkdir(testproject_dir)
+        out, err = self.run_django_admin(args)
+        self.addCleanup(shutil.rmtree, testproject_dir)
+        self.assertNoOutput(err)
+        test_manage_py = os.path.join(testproject_dir, 'manage.py')
+        with open(test_manage_py, 'r') as fp:
+            manage_py_contents = fp.read()
+        t_project_name, t_project_directory, t_secret_key = [x.lstrip('#') for x in manage_py_contents.split('\n')[-4:] if x]
+        self.assertEqual(t_project_name, 'a_project')
+        self.assertEqual(t_project_directory, testproject_dir)
+        self.assertEqual(50, len(t_secret_key))
